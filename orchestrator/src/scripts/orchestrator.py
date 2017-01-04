@@ -1,0 +1,76 @@
+#!/usr/bin/env python
+# coding: utf-8
+import rospy
+
+
+from geometry_msgs.msg import PointStamped
+from geometry_msgs.msg import PoseStamped
+from geometry_msgs.msg import Pose
+from geometry_msgs.msg import Twist
+from geometry_msgs.msg import Point
+from std_msgs.msg import Header
+
+from map_handler import Map
+from drone import Drone
+from order import Order
+
+
+class Orchestrator(object):
+    def __init__(self):
+        self.drone = Drone(47, 43, 0)
+        self.map = Map()
+
+        self.pub_point = rospy.Publisher('point', PointStamped, queue_size=10)
+        self.pub_point2 = rospy.Publisher('point2', PointStamped, queue_size=10)
+
+        rospy.Subscriber("/position", PoseStamped, self.callback_position)
+        rospy.Subscriber("/order", Twist, self.callback_order)
+
+    def check_collisions(self):
+        distance, x, y = self.map.get_nearest_obstacle(self.drone.position)
+        print(distance, x, y)
+        self.pub_point2.publish(PointStamped(
+            point=Point(x=x, y=y, z=0),
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
+
+    def publish_poz(self):
+        self.pub_point.publish(PointStamped(
+            point=self.drone.position,
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
+
+    def callback_position(self, pose_stamped):
+        self.drone.position = pose_stamped.pose.position
+        self.drone.orientation = pose_stamped.pose.orientation
+
+    def callback_order(self, twist):
+        order = Order(twist)
+        distance_twist = order.transform_to_distance_twist()
+        futur_x = self.drone.position.x + distance_twist.position.x
+        futur_y = self.drone.position.y + distance_twist.position.y
+        distance, x, y = self.map.get_nearest_obstacle(Pose(x=futur_x, y=futur_y))
+
+        #if distance < self.drone.
+
+
+
+def run():
+    rospy.init_node('orchestrator', anonymous=True)
+
+    orchestrator = Orchestrator()
+
+    orchestrator.check_collisions()
+    orchestrator.publish_poz()
+    # while True:
+    #     try:
+    #         time.sleep(1)
+    #     except KeyboardInterrupt:
+    #         print "Bye"
+    #         sys.exit()
+
+    rospy.spin()
+
+
+if __name__ == '__main__':
+    run()
