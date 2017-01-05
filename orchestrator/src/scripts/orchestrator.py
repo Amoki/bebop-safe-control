@@ -64,6 +64,7 @@ class Orchestrator(object):
         '''
         Callback called on new leap order is received
         '''
+        print("Order received\n")
         order = Order(twist)
         distance_twist = order.transform_to_distance_twist()
         future_x = self.drone.position.x + distance_twist.position.x
@@ -93,6 +94,7 @@ def run():
     rospy.init_node('orchestrator', anonymous=True)
 
     orchestrator = Orchestrator()
+    print("Orchestrator init\n")
 
     rospy.spin()
 

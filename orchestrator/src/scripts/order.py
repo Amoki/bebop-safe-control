@@ -41,24 +41,24 @@ class Order(object):
         speed = 0,2
 
         if self.linear.y>0:
-            print("Drone order is to go left")
+            print("Drone order is to go left\n")
             y = speed
         elif self.linear.y<0:
-            print("Drone order is to go right")
+            print("Drone order is to go right\n")
             y = -speed
 
         if self.linear.x>0:
-            print("Drone order is to go forward")
+            print("Drone order is to go forward\n")
             x = speed
         elif self.linear.x<0:
-            print("Drone order is to go backward")
+            print("Drone order is to go backward\n")
             x = -speed
 
         if self.linear.z>0:
-            print("Drone order is to go up")
+            print("Drone order is to go up\n")
             z = speed
         elif self.linear.z<0:
-            print("Drone order is to go down")
+            print("Drone order is to go down\n")
             z = -speed
 
 
