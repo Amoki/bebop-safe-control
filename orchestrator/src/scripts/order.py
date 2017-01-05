@@ -62,7 +62,7 @@ class Order(object):
         elif self.linear.y < 0:
             print("Drone order is to go right\n")
             y = -speed
-        else
+        else:
             y = 0
 
         if self.linear.x > 0:
@@ -71,7 +71,7 @@ class Order(object):
         elif self.linear.x < 0:
             print("Drone order is to go backward\n")
             x = -speed
-        else
+        else:
             x = 0
 
         if self.linear.z > 0:
@@ -80,7 +80,7 @@ class Order(object):
         elif self.linear.z < 0:
             print("Drone order is to go down\n")
             z = -speed
-        else
+        else:
             z=0
 
         print("\n")
@@ -91,12 +91,26 @@ class Order(object):
             z = y #upward/downward
         )
 
+        print("Linear Vector3 initialized")
+
         angular_vector = Vector3(
             x=0,
             y=0,
             z=0
         )
 
+        print("Angular Vector3 initialized")
+
+
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
+
+        print("bebop_twist = [%s;%s;%s][%s;%s;%s]\n" % (
+            linear_vector.x,
+            linear_vector.y,
+            linear_vector.z,
+            angular_vector.x,
+            angular_vector.y,
+            angular_vector.z
+            ))
 
         return bebop_twist

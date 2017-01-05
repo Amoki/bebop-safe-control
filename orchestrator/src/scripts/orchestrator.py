@@ -72,10 +72,12 @@ class Orchestrator(object):
         future_z = self.drone.position.z + distance_twist.linear.z
 
         if self.will_collide(Point(x=future_x, y=future_y, z=future_z)):
-            print('Unable to execute this order')
+            print('Unable to execute this order\n')
         else:
+            print("Order execution validated no collision point detected \n")
             bebop_twist = order.transform_to_bebop_twist()
             # Check if there is special order like land or take off
+            print("Sending movement order to bebop\n")
             self.pub_bebop.publish(bebop_twist)
 
     def callback_clicked_point(self, point_stamped):
