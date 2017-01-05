@@ -42,19 +42,31 @@ def listener_callback(data):
     rospy.Rate(40)
     rospy.init_node(NODENAME,anonymous=True)
     
-    '''if start position initialized'''
+
+    '''if start position not initialized'''
+    #
     '''TO DO'''
 
+    #if command mode set to relative and not to absolute
     if com_relative_mode:
+
+        #establish hand position delta since last time
         delta_pos.x= data.palmpos.x - old_hand_pos.x
         delta_pos.y= data.palmpos.y - old_hand_pos.y
         delta_pos.z= data.palmpos.z - old_hand_pos.z
 
+        #update hand position memory
+        old_hand_pos.x = data.palmpos.x
+        old_hand_pos.y = data.palmpos.y
+        old_hand_pos.z = data.palmpos.z
+
+        #calculate time since last publish from leap
         delta_time = datetime.datetime.now() - time_mem
+
+        #update time memory
         time_mem = datetime.datetime.now()
 
-        time_mem = datetime.datetime.now()
-
+        #create hand speed vector
         linear_vector = Vector3(
             x = (delta_pos.x/delta_time), #left/right
             y = (delta_pos.y/delta_time), #upward/downward
@@ -67,8 +79,10 @@ def listener_callback(data):
             z=0
         )
 
+        #create message to be published
         message = Twist(linear=linear_vector, angular_vector=angular_vector)
         
+        #publish message to orchestrator
         pub.publish(message)
 
 
@@ -77,7 +91,6 @@ def listener_callback(data):
 def listener():
     init()
     rospy.init_node('leap_sub', anonymous=True)
-    # rospy.Subscriber("leapmotion/raw", leap, callback)
     rospy.Subscriber("leapmotion/data", leapros, listener_callback)
     rospy.spin()
 
