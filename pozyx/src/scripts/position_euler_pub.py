@@ -8,7 +8,7 @@ This shows how to separate the position and IMU data in two separate channels.
 import pypozyx
 import rospy
 from geometry_msgs.msg import Point32
-from pozyx_ros_examples.msg import EulerAngles
+from pozyx.msg import EulerAngles
 
 remote_id = None
 

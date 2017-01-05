@@ -8,7 +8,7 @@ getAllSensorData.
 
 import pypozyx
 import rospy
-from pozyx_ros_examples.msg import EulerAngles
+from pozyx.msg import EulerAngles
 
 remote_id = None
 

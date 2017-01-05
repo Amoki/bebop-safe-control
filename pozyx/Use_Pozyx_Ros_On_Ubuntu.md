@@ -22,14 +22,14 @@ $ cd ~/catkin_ws_pozyx/src
 $ catkin_init_workspace
 ```
 
-3. Copy-Paste the folder *pozyx_ros/pozyx_ros_examples*, downloaded in step 1, into *~/catkin_ws_pozyx/src*
+3. Copy-Paste the folder *pozyx_ros/pozyx*, downloaded in step 1, into *~/catkin_ws_pozyx/src*
 
 4. Before performing the `catkin_make` command you need to change a little thing in the code:
-In *~/catkin_ws_pozyx/src/pozyx_ros_examples/CMakeLists.txt* at line 108 to look like as followed
+In *~/catkin_ws_pozyx/src/pozyx/CMakeLists.txt* at line 108 to look like as followed
 ```python
 catkin_package(
     INCLUDE_DIRS #include
-    LIBRARIES pozyx_ros_examples
+    LIBRARIES pozyx
     CATKIN_DEPENDS message_runtime roscpp rospy std_msgs
     DEPENDS system_lib
 )
@@ -65,7 +65,7 @@ or manually test the COM Port (once pySerial)
 
 8. Launch the wanted package...
 ```
-$ rosrun pozyx_ros_examples \[ARGS\]
+$ rosrun pozyx \[ARGS\]
 ```
 where ARGS can be:
 ```

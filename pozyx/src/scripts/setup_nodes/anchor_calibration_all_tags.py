@@ -9,6 +9,7 @@ recommend to run the uwb_configurator node first.
 
 import pypozyx
 import rospy
+from std_msgs.msg import String
 
 from settings import my_anchors
 from settings import com_port_id
