@@ -19,7 +19,7 @@ from order import Order
 
 class Orchestrator(object):
     def __init__(self):
-        self.drone = Drone(47, 43, 0)
+        self.drone = Drone(47.0, 43.0, 1.5)
         self.map = Map()
 
         self.pub_point = rospy.Publisher('point', PointStamped, queue_size=10)
@@ -37,9 +37,9 @@ class Orchestrator(object):
         return True if the future position of the drone is to close to a wall
         return False if there is no expected collision
         '''
-        distance, x, y = self.map.get_nearest_obstacle(pose)
+        distance, x, y, z = self.map.get_nearest_obstacle(pose)
         self.pub_point2.publish(PointStamped(
-            point=Point(x=x, y=y, z=0),
+            point=Point(x=x, y=y, z=z),
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
         return distance / self.map.info.resolution < self.drone.size
@@ -66,10 +66,11 @@ class Orchestrator(object):
         '''
         order = Order(twist)
         distance_twist = order.transform_to_distance_twist()
-        futur_x = self.drone.position.x + distance_twist.position.x
-        futur_y = self.drone.position.y + distance_twist.position.y
+        future_x = self.drone.position.x + distance_twist.position.x
+        future_y = self.drone.position.y + distance_twist.position.y
+        future_z = self.drone.position.z + distance_twist.position.z
 
-        if self.will_collide(Pose(x=futur_x, y=futur_y)):
+        if self.will_collide(Pose(x=future_x, y=future_y, z=future_z)):
             print('Unable to execute this order')
         else:
             bebop_twist = order.transform_to_bebop_twist()
