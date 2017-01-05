@@ -3,7 +3,7 @@
 import rospy
 import math
 from nav_msgs.srv import GetMap
-import Image
+
 
 class Map(object):
     data = None
@@ -16,7 +16,6 @@ class Map(object):
             retrieved_map = get_map()
             self.data = retrieved_map.map.data
             self.info = retrieved_map.map.info
-            print(self.info)
         except rospy.ServiceException, e:
             print "Service call failed: %s" % e
 
@@ -32,37 +31,25 @@ class Map(object):
     def get_nearest_obstacle(self, position):
         relative_x = position.x / self.info.resolution
         relative_y = position.y / self.info.resolution
+        print(relative_x, relative_y)
         min_dist = float('inf')
         obstacle_x = None
         obstacle_y = None
 
-        im = Image.new('RGB', (self.info.width, self.info.height))
-
         for j in range(0, self.info.height):
             for i in range(0, self.info.width):
                 color = self.data[self.map_index(i, j)]
-                if j == 114 and i == 40:
-                    print('aaaaaaa', color)
-                if j == 115 and i == 40:
-                    print('bbbbbbbbbbbbbb', color)
                 if color == 100:
                     w_x = self.map_wxgx(i)
                     w_y = self.map_wygy(j)
-                    dist_sq = pow(w_x - relative_x, 2) + pow(w_y - relative_y, 2)
+                    dist_sq = pow(i - relative_x, 2) + pow(j - relative_y, 2)
                     if dist_sq < min_dist:
                         min_dist = dist_sq
-                        obstacle_x = w_x
-                        obstacle_y = w_y
-
-                if color == 100:
-                    color = 255
-                if color == -1:
-                    color = 128
-                im.putpixel((i, j), (color, color, color))
-        im.save('test.png')
+                        obstacle_x = i
+                        obstacle_y = j
 
         min_dist = math.sqrt(min_dist)
-        obstacle_x = obstacle_x
-        obstacle_y = obstacle_y
+        obstacle_x = obstacle_x * self.info.resolution
+        obstacle_y = obstacle_y * self.info.resolution
 
         return (min_dist, obstacle_x, obstacle_y)

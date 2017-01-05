@@ -7,3 +7,6 @@ class Order(object):
 
     def transform_to_distance_twist(self):
         pass
+
+    def transform_to_bebop_twist(self):
+        pass
