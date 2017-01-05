@@ -73,7 +73,7 @@ class Orchestrator(object):
             print('Unable to execute this order')
         else:
             bebop_twist = order.transform_to_bebop_twist()
-            # Checl if special order like land or take off
+            # Check if there is special order like land or take off
             self.pub_bebop.publish(bebop_twist)
 
 
