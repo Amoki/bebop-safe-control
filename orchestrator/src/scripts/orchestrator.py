@@ -19,7 +19,7 @@ from order import Order
 
 class Orchestrator(object):
     def __init__(self):
-        self.drone = Drone(54, 62, 0)
+        self.drone = Drone(47, 43, 0)
         self.map = Map()
 
         self.pub_point = rospy.Publisher('point', PointStamped, queue_size=10)
@@ -38,12 +38,11 @@ class Orchestrator(object):
         return False if there is no expected collision
         '''
         distance, x, y = self.map.get_nearest_obstacle(pose)
-        return distance / self.map.info.resolution < self.drone.size
-        print(distance, x, y)
         self.pub_point2.publish(PointStamped(
             point=Point(x=x, y=y, z=0),
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
+        return distance / self.map.info.resolution < self.drone.size
 
     def publish_poz(self):
         '''

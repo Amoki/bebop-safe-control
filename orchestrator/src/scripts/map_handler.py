@@ -31,7 +31,7 @@ class Map(object):
     def get_nearest_obstacle(self, position):
         relative_x = position.x / self.info.resolution
         relative_y = position.y / self.info.resolution
-        print(relative_x, relative_y)
+
         min_dist = float('inf')
         obstacle_x = None
         obstacle_y = None
