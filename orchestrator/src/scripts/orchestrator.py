@@ -33,6 +33,10 @@ class Orchestrator(object):
         rospy.Subscriber("/order", Twist, self.callback_order)
 
     def will_collide(self, pose):
+        '''
+        return True if the future position of the drone is to close to a wall
+        return False if there is no expected collision
+        '''
         distance, x, y = self.map.get_nearest_obstacle(pose)
         return distance / self.map.info.resolution < self.drone.size
         print(distance, x, y)
@@ -42,16 +46,25 @@ class Orchestrator(object):
         ))
 
     def publish_poz(self):
+        '''
+        debug methode for map visualisation
+        '''
         self.pub_point.publish(PointStamped(
             point=self.drone.position,
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
 
     def callback_position(self, pose_stamped):
+        '''
+        Callback called on new pozyx position
+        '''
         self.drone.position = pose_stamped.pose.position
         self.drone.orientation = pose_stamped.pose.orientation
 
     def callback_order(self, twist):
+        '''
+        Callback called on new leap order is received
+        '''
         order = Order(twist)
         distance_twist = order.transform_to_distance_twist()
         futur_x = self.drone.position.x + distance_twist.position.x
