@@ -64,4 +64,5 @@ class Map(object):
             obstacle_y = position.y  # the y of the drone
             obstacle_z = self.ROOF_CM  # the z of the roof
 
+        min_dist = min_dist * self.info.resolution
         return (min_dist, obstacle_x, obstacle_y, obstacle_z)

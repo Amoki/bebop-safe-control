@@ -42,7 +42,7 @@ class Orchestrator(object):
             point=Point(x=x, y=y, z=z),
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
-        return distance / self.map.info.resolution < self.drone.size
+        return distance < self.drone.size
 
     def publish_poz(self):
         '''

@@ -3,7 +3,7 @@
 from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 
-DRONE_RADIUS = 16  # cm
+DRONE_RADIUS = 0.16  # m
 
 
 class Drone(object):
