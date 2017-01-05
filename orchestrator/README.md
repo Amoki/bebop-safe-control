@@ -1,6 +1,22 @@
 # ros-drone-orchestrator
 
 
+## Run orchestrator
+# Start the map server
+```bash
+rosrun map_server map_server src/orchestrator/maps/map.yaml
+```
+
+# Transform the map as a static map
+```bash
+rosrun tf static_transform_publisher 0.0 0.0 0.0 0.0 0.0 0.0 map fixed_map 100
+```
+
+# Run orchestrator itself
+```bash
+rosrun orchestrator orchestrator.py
+```
+
 ## Run rviz
 ```bash
 rosrun rviz rviz src/orchestrator/maps/rviz_config.rviz
