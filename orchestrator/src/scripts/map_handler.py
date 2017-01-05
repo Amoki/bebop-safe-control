@@ -2,6 +2,7 @@
 # coding: utf-8
 import rospy
 import math
+import itertools
 from nav_msgs.srv import GetMap
 
 
@@ -26,37 +27,33 @@ class Map(object):
     def map_index(self, i, j):
         return i + j * self.info.width
 
-    def map_wxgx(self, i):
-        return self.info.origin.position.x + (i - self.info.width / 2) * self.info.resolution
-
-    def map_wygy(self, j):
-        return self.info.origin.position.y + (j - self.info.height / 2) * self.info.resolution
-
     def get_nearest_obstacle(self, position):
-        relative_x = position.x / self.info.resolution
-        relative_y = position.y / self.info.resolution
-        relative_z = position.z / self.info.resolution
+        resolution = self.info.resolution
+        relative_x = position.x / resolution
+        relative_y = position.y / resolution
+        relative_z = position.z / resolution
 
+        # optimisations:
         min_dist = float('inf')
-        obstacle_x = None
-        obstacle_y = None
+        obstacle_x = float()
+        obstacle_y = float()
+        dist_sq = float()
+        data = self.data
+        map_index = self.map_index
 
-        for j in range(0, self.info.height):
-            for i in range(0, self.info.width):
-                color = self.data[self.map_index(i, j)]
-                if color == 100:
-                    w_x = self.map_wxgx(i)
-                    w_y = self.map_wygy(j)
-                    dist_sq = pow(i - relative_x, 2) + pow(j - relative_y, 2)
-                    if dist_sq < min_dist:
-                        min_dist = dist_sq
-                        obstacle_x = i
-                        obstacle_y = j
+        # loop over each pixel of the map
+        for i, j in itertools.product(xrange(self.info.width), xrange(self.info.height)):
+            if data[map_index(i, j)] == 100:
+                dist_sq = pow(i - relative_x, 2) + pow(j - relative_y, 2)
+                if dist_sq < min_dist:
+                    min_dist = dist_sq
+                    obstacle_x = i
+                    obstacle_y = j
 
         min_dist = math.sqrt(min_dist)
-        obstacle_x = obstacle_x * self.info.resolution
-        obstacle_y = obstacle_y * self.info.resolution
-        obstacle_z = relative_z * self.info.resolution  # the z of the drone itself
+        obstacle_x = obstacle_x * resolution
+        obstacle_y = obstacle_y * resolution
+        obstacle_z = relative_z * resolution  # the z of the drone itself
 
         if self.roof - relative_z < min_dist:
             min_dist = self.roof - relative_z
@@ -64,5 +61,5 @@ class Map(object):
             obstacle_y = position.y  # the y of the drone
             obstacle_z = self.ROOF_CM  # the z of the roof
 
-        min_dist = min_dist * self.info.resolution
+        min_dist = min_dist * resolution
         return (min_dist, obstacle_x, obstacle_y, obstacle_z)

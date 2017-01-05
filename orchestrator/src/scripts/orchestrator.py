@@ -1,8 +1,6 @@
 #!/usr/bin/env python
 # coding: utf-8
 import rospy
-import time
-import sys
 
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import PoseStamped
@@ -19,11 +17,11 @@ from order import Order
 
 class Orchestrator(object):
     def __init__(self):
-        self.drone = Drone(47.0, 43.0, 1.5)
+        self.drone = Drone(47.0, 40.0, 1.0)
         self.map = Map()
 
-        self.pub_point = rospy.Publisher('point', PointStamped, queue_size=10)
-        self.pub_point2 = rospy.Publisher('point2', PointStamped, queue_size=10)
+        self.pub_drone_position = rospy.Publisher('drone_pose', PointStamped, queue_size=10)
+        self.pub_collision_point = rospy.Publisher('collision_point', PointStamped, queue_size=10)
 
         self.pub_take_off = rospy.Publisher('bebop/takeoff', Empty, queue_size=10)
         self.pub_land = rospy.Publisher('bebop/land', Empty, queue_size=10)
@@ -32,23 +30,25 @@ class Orchestrator(object):
         rospy.Subscriber("/position", PoseStamped, self.callback_position)
         rospy.Subscriber("/order", Twist, self.callback_order)
 
+        rospy.Subscriber("/clicked_point", PointStamped, self.callback_clicked_point)
+
     def will_collide(self, pose):
         '''
         return True if the future position of the drone is to close to a wall
         return False if there is no expected collision
         '''
         distance, x, y, z = self.map.get_nearest_obstacle(pose)
-        self.pub_point2.publish(PointStamped(
+        self.pub_collision_point.publish(PointStamped(
             point=Point(x=x, y=y, z=z),
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
         return distance < self.drone.size
 
-    def publish_poz(self):
+    def publish_pose(self):
         '''
         debug methode for map visualisation
         '''
-        self.pub_point.publish(PointStamped(
+        self.pub_drone_position.publish(PointStamped(
             point=self.drone.position,
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
@@ -77,20 +77,22 @@ class Orchestrator(object):
             # Check if there is special order like land or take off
             self.pub_bebop.publish(bebop_twist)
 
+    def callback_clicked_point(self, point_stamped):
+        '''
+        Debug only
+        Callback called on new publish point on rviz position
+        '''
+        self.drone.position.x = point_stamped.point.x
+        self.drone.position.y = point_stamped.point.y
+        self.drone.position.z = point_stamped.point.z
+        self.publish_pose()
+        self.will_collide(self.drone.position)
+
 
 def run():
     rospy.init_node('orchestrator', anonymous=True)
 
     orchestrator = Orchestrator()
-
-    while True:
-        try:
-            orchestrator.will_collide(orchestrator.drone.position)
-            orchestrator.publish_poz()
-            time.sleep(1)
-        except KeyboardInterrupt:
-            print "Bye"
-            sys.exit()
 
     rospy.spin()
 
