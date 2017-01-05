@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package>
-  <name>pozyx_ros_examples</name>
+  <name>pozyx</name>
   <version>0.1.0</version>
   <description>ROS package for the Pozyx positioning system.</description>
 
@@ -19,7 +19,7 @@
   <!-- Url tags are optional, but mutiple are allowed, one per tag -->
   <!-- Optional attribute type can be: website, bugtracker, or repository -->
   <!-- Example: -->
-  <!-- <url type="website">http://wiki.ros.org/pozyx_ros_examples</url> -->
+  <!-- <url type="website">http://wiki.ros.org/pozyx</url> -->
   <url type="website">http://www.pozyx.io</url>
   <url type="repository">http://github.com/PozyxLabs/pozyx_ros_examples</url>
 

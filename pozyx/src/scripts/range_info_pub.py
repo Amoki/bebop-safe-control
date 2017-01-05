@@ -3,7 +3,7 @@
 
 import pypozyx
 import rospy
-from pozyx_ros_examples.msg import DeviceRange
+from pozyx.msg import DeviceRange
 
 remote_id = None
 destination_id = 0x6036
