@@ -69,8 +69,8 @@ def listener_callback(data):
         #create hand speed vector
         linear_vector = Vector3(
             x = (delta_pos.x/delta_time), #left/right
-            y = (delta_pos.y/delta_time), #upward/downward
-            z = (delta_pos.z/delta_time) #forward/rearward
+            y = (delta_pos.y/delta_time), #forward/rearward
+            z = (delta_pos.z/delta_time) #upward/downward
         )
 
         angular_vector = Vector3(
