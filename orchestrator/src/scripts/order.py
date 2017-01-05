@@ -1,4 +1,8 @@
+#!/usr/bin/env python
+# coding: utf-8
 
+from geometry_msgs.msg import Vector3
+from geometry_msgs.msg import Twist
 
 class Order(object):
     def __init__(self, twist):
@@ -10,17 +14,29 @@ class Order(object):
         Transform the order message (with deltas value in axes) into expected
         tranlations in order to project the futur postion in a map
         '''
-        dis_to_travel.x = self.linear.x * 5
-        dis_to_travel.y = self.linear.y * 5
-        dis_to_travel.z = self.linear.z * 5
 
-        printf("Order distance to travel is [%s;%s;%s]\n" % (
-            self.linear.x,
-            self.linear.y,
-            self.linear.z)
+        linear = Vector3(
+            x=self.linear.x * 5,
+            y=self.linear.y * 5,
+            z=self.linear.y * 5
         )
 
-        return dis_to_travel
+        angular = Vector3(
+            x=self.angular.x,
+            y=self.angular.y,
+            z=self.angular.z,
+        )
+
+        distance = Twist(linear=linear, angular=angular)
+        
+
+        print("Order distance to travel is [%s;%s;%s]\n" % (
+            distance.linear.x,
+            distance.linear.y,
+            distance.linear.z)
+        )
+
+        return distance
 
     def transform_to_bebop_twist(self):
         '''
@@ -38,31 +54,36 @@ class Order(object):
 
         Acceptable range for all fields are [-1;1]
         '''
-        speed = 0,2
+        speed = 0.2
 
-        if self.linear.y>0:
+        if self.linear.y > 0:
             print("Drone order is to go left\n")
             y = speed
-        elif self.linear.y<0:
+        elif self.linear.y < 0:
             print("Drone order is to go right\n")
             y = -speed
+        else
+            y = 0
 
-        if self.linear.x>0:
+        if self.linear.x > 0:
             print("Drone order is to go forward\n")
             x = speed
-        elif self.linear.x<0:
+        elif self.linear.x < 0:
             print("Drone order is to go backward\n")
             x = -speed
+        else
+            x = 0
 
-        if self.linear.z>0:
+        if self.linear.z > 0:
             print("Drone order is to go up\n")
             z = speed
-        elif self.linear.z<0:
+        elif self.linear.z < 0:
             print("Drone order is to go down\n")
             z = -speed
+        else
+            z=0
 
-
-        print("/n")
+        print("\n")
 
         linear_vector = Vector3(
             x = x, #left/right
@@ -76,6 +97,6 @@ class Order(object):
             z=0
         )
 
-        bebop_twist = twist(linear=linear_vector, angular=angular_vector)
+        bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
 
         return bebop_twist

@@ -22,3 +22,11 @@ rosrun orchestrator orchestrator.py
 rosrun rviz rviz src/orchestrator/maps/rviz_config.rviz
 ```
 Then you can click on 'Publish point' to manually move the drone
+
+
+## Paul
+
+rosrun orchestrator orchestrator.py 
+git push https://github.com/Amoki/bebop-safe-control.git master
+rostopic pub -1 /orchestrator/order geometry_msgs/Twist -- '[2.0, 0.0, 0.0]' '[0.0, 0.0, 0.0]'
+

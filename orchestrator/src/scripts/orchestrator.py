@@ -67,11 +67,11 @@ class Orchestrator(object):
         print("Order received\n")
         order = Order(twist)
         distance_twist = order.transform_to_distance_twist()
-        future_x = self.drone.position.x + distance_twist.position.x
-        future_y = self.drone.position.y + distance_twist.position.y
-        future_z = self.drone.position.z + distance_twist.position.z
+        future_x = self.drone.position.x + distance_twist.linear.x
+        future_y = self.drone.position.y + distance_twist.linear.y
+        future_z = self.drone.position.z + distance_twist.linear.z
 
-        if self.will_collide(Pose(x=future_x, y=future_y, z=future_z)):
+        if self.will_collide(Point(x=future_x, y=future_y, z=future_z)):
             print('Unable to execute this order')
         else:
             bebop_twist = order.transform_to_bebop_twist()

@@ -2,13 +2,12 @@
 __author__ = 'flier'
 
 import argparse
-
 import rospy
 import datetime
 import leap_interface
 from leap_motion.msg import leap
 from leap_motion.msg import leapros
-from geometry_msg.msg import Twist
+from geometry_msgs.msg import Twist
 from geometry_msg.msg import Vector3
 
 NODENAME = 'hand_vect'
