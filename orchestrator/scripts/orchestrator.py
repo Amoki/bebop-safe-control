@@ -64,21 +64,50 @@ class Orchestrator(object):
         '''
         Callback called on new leap order is received
         '''
-        print("Order received\n")
+        
+        print("\n=============================================")
+        print("Order received, drone status is %s\n" % (self.drone.in_the_air))
         order = Order(twist)
-        distance_twist = order.transform_to_distance_twist()
-        future_x = self.drone.position.x + distance_twist.linear.x
-        future_y = self.drone.position.y + distance_twist.linear.y
-        future_z = self.drone.position.z + distance_twist.linear.z
 
-        if self.will_collide(Point(x=future_x, y=future_y, z=future_z)):
-            print('Unable to execute this order\n')
+        #Look for special order
+        if order.angular.x == 1 or order.angular.y ==1:
+            # Check if special is land or take off
+            # if x == 1 Take off !
+            if order.angular.x:
+                print("Special order detected: Take off")
+                if self.drone.in_the_air:
+                    self.drone.in_the_air = True
+                    #Transmit take off order
+                    self.pub_take_off.publish()
+
+                else:
+                    print("Drone is already in the air")
+
+            # if y == 1 Land !
+            if order.angular.y:
+                print("Special order detected: Land")
+                if self.drone.in_the_air:
+                    self.drone.in_the_air == False
+                    #Transmit land order
+                    self.pub_land
+
+                else:
+                    print("Drone is already landed")
+
         else:
-            print("Order execution validated no collision point detected \n")
-            bebop_twist = order.transform_to_bebop_twist()
-            # Check if there is special order like land or take off
-            print("Sending movement order to bebop\n")
-            self.pub_bebop.publish(bebop_twist)
+            # Look for move order
+            distance_twist = order.transform_to_distance_twist()
+            future_x = self.drone.position.x + distance_twist.linear.x
+            future_y = self.drone.position.y + distance_twist.linear.y
+            future_z = self.drone.position.z + distance_twist.linear.z
+
+            if self.will_collide(Point(x=future_x, y=future_y, z=future_z)):
+                print('Unable to execute this order\n')
+            else:
+                print("Order execution validated no collision point detected \n")
+                bebop_twist = order.transform_to_bebop_twist()
+                print("Sending movement order to bebop\n")
+                self.pub_bebop.publish(bebop_twist)
 
     def callback_clicked_point(self, point_stamped):
         '''

@@ -52,6 +52,9 @@ class Order(object):
         angular.z (+)      Rotate counter clockwise
                   (-)      Rotate clockwise
 
+        angular.x (1)       Take off
+        angular.y (1)       Land
+
         Acceptable range for all fields are [-1;1]
         '''
         speed = 0.2
@@ -100,6 +103,7 @@ class Order(object):
         )
 
         print("Angular Vector3 initialized")
+
 
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
 

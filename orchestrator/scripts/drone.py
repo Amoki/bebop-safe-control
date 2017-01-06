@@ -10,6 +10,7 @@ class Drone(object):
     position = Point()
     orientation = Quaternion()
     size = DRONE_RADIUS
+    in_the_air = False
 
     def __init__(self, x, y, z):
         self.position.x = x
