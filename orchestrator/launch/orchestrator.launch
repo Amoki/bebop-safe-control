@@ -1,0 +1,8 @@
+<launch>
+	<!-- Launch the map server -->
+	<node pkg="map_server" name="map_server" type="map_server" args="$(find orchestrator)/maps/map.yaml" />
+
+	<!-- Launch the map -->
+	<node pkg="orchestrator" name="orchestrator" type="orchestrator.py" output="screen"/>
+
+</launch>
