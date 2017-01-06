@@ -1,0 +1,10 @@
+<launch>
+	<!-- Launch the map -->
+	<node pkg="map_server" name="map_server" type="map_server" args="$(find orchestrator)/maps/map.yaml" />
+
+	<!-- Launch the map fixer -->
+	<node pkg="tf" name="static_transform_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map fixed_map 100" />
+
+	<!-- Launch rviz -->
+	<node pkg="rviz" name="rviz" type="rviz" args="$(find orchestrator)/rviz/orchestrator.rviz" />
+</launch>
