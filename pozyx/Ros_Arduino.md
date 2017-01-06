@@ -1,11 +1,11 @@
-#ROS ON ARDUINO
+# ROS ON ARDUINO
 We see in this file, what you need to do in order to use a ROS node on the Arduino.
 
 > Pierre-Emmanuel Cochet 2016-2017
 
 ____
 
-##INSTALLATION OF LIBRARIES
+## INSTALLATION OF LIBRARIES
 1. Install roserial for ARDUINO
 ```bash
 $ sudo apt-get install ros-indigo-rosserial-arduino
@@ -24,13 +24,17 @@ $ cd ~/Arduino/libraries
 $ rm -rf ros_lib
 $ rosrun rosserial_arduino make_libraries.py .
 ```
-4. In any case upload the code on your Arduino, and launch it. You may use the
+4. You may need also some other libraries. (For example, if during the
+  compilation Arduino tells you <string>: no such file or directory)
+  download the following lib [STL Source Code](https://www.sgi.com/tech/stl/download.html)
+  paste the under your arduino folder: `/arduino-1.0.8/hardware/tools/avr/avr/include/`
+5. In any case upload the code on your Arduino, and launch it. You may use the
 [code tricks](#code_tricks) detailled bellow.
-5. Then launch
+6. Then launch
 `$ rosrun rosserial_python serial_node.py /dev/ttyACM0`
-6. If you want to see the messages on the topic type `rostopic echo <chatter>`
+7. If you want to see the messages on the topic type `rostopic echo <chatter>`
 
-##CODE TRICKS
+## CODE TRICKS
 - Arduino code: `ros::NodeHandle nh;` instantiate the node handler,which allows
 our program to create publishers and subscribers.
 - Arduino code :
