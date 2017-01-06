@@ -4,6 +4,7 @@
 from geometry_msgs.msg import Vector3
 from geometry_msgs.msg import Twist
 
+
 class Order(object):
     def __init__(self, twist):
         self.linear = twist.linear
@@ -28,7 +29,6 @@ class Order(object):
         )
 
         distance = Twist(linear=linear, angular=angular)
-        
 
         print("Order distance to travel is [%s;%s;%s]\n" % (
             distance.linear.x,
@@ -41,14 +41,14 @@ class Order(object):
     def transform_to_bebop_twist(self):
         '''
         Turn the order message to bebop compatible twist message
-        
+
         linear.x  (+)      Translate forward
                   (-)      Translate backward
         linear.y  (+)      Translate to left
                   (-)      Translate to right
         linear.z  (+)      Ascend
                   (-)      Descend
-        
+
         angular.z (+)      Rotate counter clockwise
                   (-)      Rotate clockwise
 
@@ -62,7 +62,7 @@ class Order(object):
         elif self.linear.y < 0:
             print("Drone order is to go right\n")
             y = -speed
-        else
+        else:
             y = 0
 
         if self.linear.x > 0:
@@ -71,7 +71,7 @@ class Order(object):
         elif self.linear.x < 0:
             print("Drone order is to go backward\n")
             x = -speed
-        else
+        else:
             x = 0
 
         if self.linear.z > 0:
@@ -80,15 +80,15 @@ class Order(object):
         elif self.linear.z < 0:
             print("Drone order is to go down\n")
             z = -speed
-        else
-            z=0
+        else:
+            z = 0
 
         print("\n")
 
         linear_vector = Vector3(
-            x = x, #left/right
-            y = y, #forward/rearward
-            z = y #upward/downward
+            x=x,  # left/right
+            y=y,  # forward/rearward
+            z=z  # upward/downward
         )
 
         angular_vector = Vector3(
