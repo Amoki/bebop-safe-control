@@ -104,7 +104,6 @@ class Order(object):
 
         print("Angular Vector3 initialized")
 
-
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
 
         print("bebop_twist = [%s;%s;%s][%s;%s;%s]\n" % (
