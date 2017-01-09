@@ -70,15 +70,13 @@ class ArduinoHardware {
 #if defined(USBCON) and !(defined(USE_USBCON))
       /* Leonardo support */
       iostream = &Serial1;
-#elif defined(USE_TEENSY_HW_SERIAL)
-      iostream = &Serial1;
 #else
       iostream = &Serial;
 #endif
       baud_ = 57600;
     }
     ArduinoHardware(ArduinoHardware& h){
-      this->iostream = h.iostream;
+      this->iostream = iostream;
       this->baud_ = h.baud_;
     }
   

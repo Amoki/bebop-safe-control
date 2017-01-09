@@ -40,15 +40,12 @@
 
 #include <ros/ros.h>
 
-#include "rosserial_server/session.h"
-
-
 namespace rosserial_server
 {
 
 using boost::asio::ip::tcp;
 
-template< typename Session = rosserial_server::Session<tcp::socket> >
+template<typename Session>
 class TcpServer
 {
 public:

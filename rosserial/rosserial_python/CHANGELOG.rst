@@ -2,32 +2,10 @@
 Changelog for package rosserial_python
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.7.5 (2016-11-22)
+0.6.4 (2015-07-06)
 ------------------
-
-0.7.4 (2016-09-21)
-------------------
-* Try to read more serial bytes in a loop (`#248 <https://github.com/ros-drivers/rosserial/issues/248>`_)
-* Add missing "import errno" to rosserial_python
-* Integration tests for rosserial (`#243 <https://github.com/ros-drivers/rosserial/issues/243>`_)
-* rosserial_python tcp server allowing socket address reuse (`#242 <https://github.com/ros-drivers/rosserial/issues/242>`_)
-* Contributors: Mike Purvis, Vitor Matos, davidshin172
-
-0.7.3 (2016-08-05)
-------------------
-
-0.7.2 (2016-07-15)
-------------------
-
-0.7.1 (2015-07-06)
-------------------
-
-0.7.0 (2015-04-23)
-------------------
-* Adds default queue_size of 10 for rosserial_python publisher.
-* Fixed queue size warning with diagnostics publisher.
-* We don't need roslib.load_manifest any more under catkin.
-* Contributors: Basheer Subei, David Lavoie-Boutin, Mike Purvis, eisoku9618
+* Add default queue_size of 10 for rosserial_python publisher, fixes warning.
+* Contributors: Basheer Subei, David Lavoie-Boutin
 
 0.6.3 (2014-11-05)
 ------------------

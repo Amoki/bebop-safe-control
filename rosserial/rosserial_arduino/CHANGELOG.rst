@@ -2,28 +2,7 @@
 Changelog for package rosserial_arduino
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.7.5 (2016-11-22)
-------------------
-* Missing 'h' inside constructor ArduinoHardware(ArduinoHardware& h) (`#251 <https://github.com/ros-drivers/rosserial/issues/251>`_)
-* Contributors: MalcolmReynlods
-
-0.7.4 (2016-09-21)
-------------------
-
-0.7.3 (2016-08-05)
-------------------
-
-0.7.2 (2016-07-15)
-------------------
-* Add ros.h include to transform_broadcaster
-* Add environment variable for arduino location
-* Add support for HW Serial ports on the Teensy
-* Contributors: David Lavoie-Boutin, Gary Servin
-
-0.7.1 (2015-07-06)
-------------------
-
-0.7.0 (2015-04-23)
+0.6.4 (2015-07-06)
 ------------------
 
 0.6.3 (2014-11-05)

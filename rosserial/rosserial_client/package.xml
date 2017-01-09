@@ -1,6 +1,6 @@
-<package format="2">
+<package>
   <name>rosserial_client</name>
-  <version>0.7.5</version>
+  <version>0.6.4</version>
   <description>
     Generalized client side source for rosserial.
   </description>
@@ -12,12 +12,9 @@
   <url>http://ros.org/wiki/rosserial_client</url>
 
   <buildtool_depend>catkin</buildtool_depend>
-  <build_export_depend>rosbash</build_export_depend>
 
-  <exec_depend>rosserial_msgs</exec_depend>
-  <exec_depend>std_msgs</exec_depend>
-  <exec_depend>rospy</exec_depend>
-  <exec_depend>tf</exec_depend>
-  
-  <test_depend>rosserial_msgs</test_depend>
+  <run_depend>std_msgs</run_depend>
+  <run_depend>rosserial_msgs</run_depend>
+  <run_depend>rospy</run_depend>
+  <run_depend>tf</run_depend>
 </package>

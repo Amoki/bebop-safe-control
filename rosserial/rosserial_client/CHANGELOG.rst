@@ -2,50 +2,15 @@
 Changelog for package rosserial_client
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-0.7.5 (2016-11-22)
+0.6.4 (2015-07-06)
 ------------------
-* rosserial client variable typedefs (`#254 <https://github.com/ros-drivers/rosserial/issues/254>`_)
-  * Add typedefs to generated messages
-  This brings rosserial message headers in line with
-  roscpp headers that provide a typedef for the message
-  variable member.
-  * Removing unused imports and variables.
-* Added functions for endian-agnostic memory copying (`#240 <https://github.com/ros-drivers/rosserial/issues/240>`_)
-* Contributors: Mike O'Driscoll, ivan
-
-0.7.4 (2016-09-21)
-------------------
-* Integration tests for rosserial (`#243 <https://github.com/ros-drivers/rosserial/issues/243>`_)
-* Support member functions as subscriber callbacks.
-* Contributors: Mike O'Driscoll, Mike Purvis
-
-0.7.3 (2016-08-05)
-------------------
-* Order packages by alpha rather than topologically. (`#234 <https://github.com/ros-drivers/rosserial/issues/234>`_)
-* Contributors: Mike Purvis
-
-0.7.2 (2016-07-15)
-------------------
-* Add ros.h include to transform_broadcaster
-* Add environment variable for arduino location
-* Supported 32bit array lengths in python make_libraries script
-* Contributors: Alan Meekins, David Lavoie-Boutin
-
-0.7.1 (2015-07-06)
-------------------
-* Provide option to pass through CMake arguments in the CMAKE_COMMAND
-  invocation. The use-case is primarily specifying additional paths to
-  modules, for separately-packaged libraries.
-* Contributors: Mike Purvis
-
-0.7.0 (2015-04-23)
-------------------
-* Initial release for Jade.
-* Make message generating error message more verbose.
+* Provide option to pass through CMake arguments.
+* Make make_library.py error more verbose.
+* createQuaternionFromYaw made static, fixes "multiple definition" error
 * Fix initializer for fixed-length arrays.
 * Generate constructors for messages.
-* Switch to stdint integers. This allows the client to run on 64-bit systems.
-* Contributors: Mickaël, Mike Purvis, Mitchell Wills, chuck-h
+* Switch to stdint integers; this allows the client to run on 64-bit systems.
+* Contributors: Mickaël, Mike Purvis, chuck-h
 
 0.6.3 (2014-11-05)
 ------------------

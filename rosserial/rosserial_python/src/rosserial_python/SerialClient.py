@@ -35,9 +35,8 @@
 
 __author__ = "mferguson@willowgarage.com (Michael Ferguson)"
 
-import roslib
+import roslib;
 import rospy
-import imp
 
 import thread
 import multiprocessing
@@ -50,19 +49,21 @@ from rosserial_msgs.srv import *
 
 import diagnostic_msgs.msg
 
-import errno
-import signal
 import socket
-import struct
 import time
-
+import struct
+import signal
 
 def load_pkg_module(package, directory):
     #check if its in the python path
+    in_path = False
     path = sys.path
-    try:
-        imp.find_module(package)
-    except:
+    pkg_src = package+'/src' #check for the source directory which
+                             # is added to path by roslib boostrapping
+    for entry in sys.path:
+        if pkg_src in entry:
+            in_path = True
+    if not in_path:
         roslib.load_manifest(package)
     try:
         m = __import__( package + '.' + directory )
@@ -226,7 +227,6 @@ class RosSerialServer:
 
     def listen(self):
         self.serversocket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        self.serversocket.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         #bind the socket to a public host, and a well-known port
         self.serversocket.bind(("", self.tcp_portnum)) #become a server socket
         self.serversocket.listen(1)
@@ -303,6 +303,9 @@ class RosSerialServer:
                 raise RuntimeError("RosSerialServer.read() socket connection broken")
             self.msg = self.msg + chunk
         return self.msg
+
+    def close(self):
+        self.port.close()
 
     def inWaiting(self):
         try: # the caller checks just for <1, so we'll peek at just one byte
@@ -400,23 +403,12 @@ class SerialClient:
 
     def tryRead(self, length):
         try:
-            read_start = time.time()
-            read_current = read_start
-            bytes_remaining = length
-            result = bytearray()
-            while bytes_remaining != 0 and read_current - read_start < self.timeout:
-                received = self.port.read(bytes_remaining)
-                if len(received) != 0:
-                    result.extend(received)
-                    bytes_remaining -= len(received)
-                read_current = time.time()
-
-            if bytes_remaining != 0:
+            bytes_read = self.port.read(length)
+            if len(bytes_read) < length:
                 rospy.logwarn("Serial Port read returned short (expected %d bytes, received %d instead)."
-                              % (length, length - bytes_remaining))
+                              % (length, len(bytes_read)))
                 raise IOError()
-
-            return bytes(result)
+            return bytes_read
         except Exception as e:
             rospy.logwarn("Serial Port read failure: %s", e)
             raise IOError()

@@ -39,18 +39,20 @@
 
 #include "rosserial_server/serial_session.h"
 
-
 int main(int argc, char* argv[])
 {
+  // Initialize ROS.
   ros::init(argc, argv, "rosserial_server_serial_node");
-
   std::string port;
-  int baud;
   ros::param::param<std::string>("~port", port, "/dev/ttyACM0");
+  int baud;
   ros::param::param<int>("~baud", baud, 57600);
 
+  // Run boost::asio io service in a background thread.
   boost::asio::io_service io_service;
-  rosserial_server::SerialSession serial_session(io_service, port, baud);
-  io_service.run();
+  new rosserial_server::SerialSession(io_service, port, baud);
+  boost::thread(boost::bind(&boost::asio::io_service::run, &io_service));
+
+  ros::spin();
   return 0;
 }
