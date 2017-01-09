@@ -3,7 +3,9 @@
 import rospy
 import math
 import itertools
+import yaml
 from nav_msgs.srv import GetMap
+from os.path import dirname, abspath
 
 
 class Map(object):
@@ -21,8 +23,15 @@ class Map(object):
             self.info = retrieved_map.map.info
 
             self.roof = self.ROOF_CM / self.info.resolution
-        except rospy.ServiceException, e:
+
+            with open(dirname(dirname(abspath(__file__))) + "/maps/map.yaml", 'r') as stream:
+                map_details = yaml.load(stream)
+                self.anchors = map_details["anchors"]
+
+        except rospy.ServiceException as e:
             print "Service call failed: %s" % e
+        except yaml.YAMLError as exc:
+            print(exc)
 
     def map_index(self, i, j):
         return i + j * self.info.width

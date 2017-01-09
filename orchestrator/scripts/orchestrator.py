@@ -104,7 +104,7 @@ class Orchestrator(object):
             if self.will_collide(Point(x=future_x, y=future_y, z=future_z)):
                 print('Unable to execute this order\n')
                 # Send stabilization order
-                # TODO
+                self.pub_bebop.publish(Twist())
             else:
                 print("Order execution validated no collision point detected \n")
                 bebop_twist = order.transform_to_bebop_twist()
