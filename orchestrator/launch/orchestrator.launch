@@ -5,4 +5,7 @@
 	<!-- Launch the map -->
 	<node pkg="orchestrator" name="orchestrator" type="orchestrator.py" output="screen"/>
 
+	<!-- Launch the position converter -->
+	<node pkg="orchestrator" name="position" type="position.py"/>
+
 </launch>
