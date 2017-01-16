@@ -10,6 +10,8 @@ from nav_msgs.srv import GetMap
 from geometry_msgs.msg import Point
 from orchestrator.srv import GetNearestObstacle
 
+import timeit
+
 
 class Map(object):
     data = None
@@ -27,7 +29,7 @@ class Map(object):
 
             self.roof = self.ROOF_CM / self.info.resolution
 
-            with open(dirname(dirname(abspath(__file__))) + "/maps/map.yaml", 'r') as stream:
+            with open(dirname(dirname(abspath(__file__))) + rospy.get_param('map_path'), 'r') as stream:
                 map_details = yaml.load(stream)
                 self.anchors = map_details["anchors"]
 
@@ -40,6 +42,7 @@ class Map(object):
         return i + j * self.info.width
 
     def handle_get_nearest_obstacle(self, req):
+        start_time = timeit.default_timer()
         position = req.position
         resolution = self.info.resolution
         relative_x = position.x / resolution
@@ -74,6 +77,7 @@ class Map(object):
             obstacle_y = position.y  # the y of the drone
             obstacle_z = self.ROOF_CM  # the z of the roof
 
+        print timeit.default_timer() - start_time
         return Point(
             x=obstacle_x,
             y=obstacle_y,
