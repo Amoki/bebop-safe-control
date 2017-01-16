@@ -4,8 +4,13 @@ import rospy
 import math
 import itertools
 import yaml
-from nav_msgs.srv import GetMap
 from os.path import dirname, abspath
+
+from nav_msgs.srv import GetMap
+from geometry_msgs.msg import Point
+from orchestrator.srv import GetNearestObstacle
+
+import timeit
 
 
 class Map(object):
@@ -24,7 +29,7 @@ class Map(object):
 
             self.roof = self.ROOF_CM / self.info.resolution
 
-            with open(dirname(dirname(abspath(__file__))) + "/maps/map.yaml", 'r') as stream:
+            with open(dirname(dirname(abspath(__file__))) + rospy.get_param('map_path'), 'r') as stream:
                 map_details = yaml.load(stream)
                 self.anchors = map_details["anchors"]
 
@@ -36,7 +41,9 @@ class Map(object):
     def map_index(self, i, j):
         return i + j * self.info.width
 
-    def get_nearest_obstacle(self, position):
+    def handle_get_nearest_obstacle(self, req):
+        start_time = timeit.default_timer()
+        position = req.position
         resolution = self.info.resolution
         relative_x = position.x / resolution
         relative_y = position.y / resolution
@@ -53,7 +60,7 @@ class Map(object):
         # loop over each pixel of the map
         for i, j in itertools.product(xrange(self.info.width), xrange(self.info.height)):
             if data[map_index(i, j)] == 100:
-                dist_sq = pow(i - relative_x, 2) + pow(j - relative_y, 2)
+                dist_sq = (i - relative_x) ** 2 + (j - relative_y) ** 2
                 if dist_sq < min_dist:
                     min_dist = dist_sq
                     obstacle_x = i
@@ -70,5 +77,20 @@ class Map(object):
             obstacle_y = position.y  # the y of the drone
             obstacle_z = self.ROOF_CM  # the z of the roof
 
-        min_dist = min_dist * resolution
-        return (min_dist, obstacle_x, obstacle_y, obstacle_z)
+        print timeit.default_timer() - start_time
+        return Point(
+            x=obstacle_x,
+            y=obstacle_y,
+            z=obstacle_z
+        )
+
+
+def run():
+    rospy.init_node('get_nearest_obstacle')
+    map_handler = Map()
+    rospy.Service('get_nearest_obstacle', GetNearestObstacle, map_handler.handle_get_nearest_obstacle)
+    rospy.spin()
+
+
+if __name__ == "__main__":
+    run()

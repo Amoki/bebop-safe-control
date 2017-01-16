@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 import rospy
+import math
 
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import PoseStamped
@@ -9,8 +10,8 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from std_msgs.msg import Header
 from std_msgs.msg import Empty
+from orchestrator.srv import GetNearestObstacle
 
-from map_handler import Map
 from drone import Drone
 from order import Order
 
@@ -18,7 +19,6 @@ from order import Order
 class Orchestrator(object):
     def __init__(self):
         self.drone = Drone(47.0, 40.0, 1.0)
-        self.map = Map()
 
         self.pub_drone_position = rospy.Publisher('drone_pose', PointStamped, queue_size=10)
         self.pub_collision_point = rospy.Publisher('collision_point', PointStamped, queue_size=10)
@@ -32,17 +32,27 @@ class Orchestrator(object):
 
         rospy.Subscriber("/clicked_point", PointStamped, self.callback_clicked_point)
 
+        rospy.wait_for_service('get_nearest_obstacle')
+        self.get_nearest_obstacle = rospy.ServiceProxy('get_nearest_obstacle', GetNearestObstacle)
+
     def will_collide(self, pose):
         '''
         return True if the future position of the drone is to close to a wall
         return False if there is no expected collision
         '''
-        distance, x, y, z = self.map.get_nearest_obstacle(pose)
+        obstacle_position = self.get_nearest_obstacle(pose).position
         self.pub_collision_point.publish(PointStamped(
-            point=Point(x=x, y=y, z=z),
+            point=obstacle_position,
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
-        return distance < self.drone.size
+
+        return self.get_distance(pose, obstacle_position) < self.drone.size
+
+    def get_distance(self, a, b):
+        return math.sqrt(
+            (b.x - a.x) ** 2 +
+            (b.y - a.y) ** 2 +
+            (b.z - a.z) ** 2)
 
     def publish_pose(self):
         '''
@@ -124,7 +134,7 @@ class Orchestrator(object):
 
 
 def run():
-    rospy.init_node('orchestrator', anonymous=True)
+    rospy.init_node('orchestrator')
 
     orchestrator = Orchestrator()
     print("Orchestrator init\n")
