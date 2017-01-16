@@ -2,8 +2,11 @@
 	<!-- Launch the map server -->
 	<node pkg="map_server" name="map_server" type="map_server" args="$(find orchestrator)/maps/map.yaml" />
 
+	<!-- Launch the map service -->
+	<node pkg="orchestrator" name="map_service" type="map_service.py" output="screen"/>
+
 	<!-- Launch the map -->
-	<node pkg="orchestrator" name="orchestrator" type="orchestrator.py" output="screen"/>
+	<node pkg="orchestrator" name="orchestrator" type="orchestrator_node.py" output="screen"/>
 
 	<!-- Launch the position converter -->
 	<node pkg="orchestrator" name="position" type="position.py"/>
