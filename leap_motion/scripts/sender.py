@@ -22,8 +22,8 @@ def sender():
     li = leap_interface.Runner()
     li.setDaemon(True)
     li.start()
-    pub     = rospy.Publisher('leapmotion/raw',leap,queue_size=1)
-    #pub_ros   = rospy.Publisher('leapmotion/data',leapros,queue_size=1)
+    #pub     = rospy.Publisher('leapmotion/raw',leap,queue_size=1)
+    pub_ros   = rospy.Publisher('leapmotion/data',leapros,queue_size=1)
     rospy.init_node(NODENAME)
 
     while not rospy.is_shutdown():
@@ -59,8 +59,8 @@ def sender():
                             dimName, pos[iDim])
 
         # We don't publish native data types, see ROS best practices
-        pub.publish(hand_direction=hand_direction_,hand_normal = hand_normal_, hand_palm_pos = hand_palm_pos_, hand_pitch = hand_pitch_, hand_roll = hand_roll_, hand_yaw = hand_yaw_)
-        #pub_ros.publish(msg)
+        #pub.publish(hand_direction=hand_direction_,hand_normal = hand_normal_, hand_palm_pos = hand_palm_pos_, hand_pitch = hand_pitch_, hand_roll = hand_roll_, hand_yaw = hand_yaw_)
+        pub_ros.publish(msg)
         rospy.sleep(rospy.get_param(PARAMNAME_FREQ_ENTIRE, FREQUENCY_ROSTOPIC_DEFAULT))
 
 

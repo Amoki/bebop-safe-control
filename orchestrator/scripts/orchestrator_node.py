@@ -28,7 +28,7 @@ class Orchestrator(object):
         self.pub_bebop = rospy.Publisher('bebop/cmd_vel', Twist, queue_size=10)
 
         rospy.Subscriber("/position", PoseStamped, self.callback_position)
-        rospy.Subscriber("/order", Twist, self.callback_order)
+        rospy.Subscriber("leapmotion/order", Twist, self.callback_order)
 
         rospy.Subscriber("/clicked_point", PointStamped, self.callback_clicked_point)
 
@@ -137,6 +137,7 @@ def run():
     rospy.init_node('orchestrator')
 
     orchestrator = Orchestrator()
+
     print("Orchestrator init\n")
 
     rospy.spin()
