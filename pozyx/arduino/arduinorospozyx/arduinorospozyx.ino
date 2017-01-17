@@ -18,15 +18,15 @@
 #include <std_msgs/String.h>
 
 #define USB_CON
+#define NB_TAGS 1
 ///////////////// PARAMETERS ////////////////
 /* Pozyx */
-uint8_t   n_tags       = 1;
-uint16_t  flyingTags[1]= {0x683D};
-uint16_t  masterTag[1] = {0x6F4A};
+uint16_t  flyingTags[NB_TAGS]= {0x683D};
+uint16_t  masterTag = 0x6F4A;
 
 uint8_t   n_anchors   = 4;
-uint16_t  anchors[4]  = { 0x606B, 0x603B, 0x6037, 0x6F4A};  // THIS IS HARD
-int32_t   anchors_x[4]= { 2000,   2000,   3600,   0000  };  // CODDED. YOU
+uint16_t  anchors[4]  = { 0x606B, 0x603B, 0x6037, 0x603A};  // THIS IS HARD
+int32_t   anchors_x[4]= { 2000,   2000,   3600,   2000  };  // CODDED. YOU
 int32_t   anchors_y[4]= { 3200,   2000,   3600,   0000  };  // MUST CHANGE (mm)
 int32_t   anchors_z[4]= { 0600,   0600,   0000,   0000  };  // FOR YOUR APP
 
@@ -45,13 +45,13 @@ ros::Publisher pub_pos("pos",  &geo_pos);
 void setup()
 {
   nh.initNode();
-  nh.advertise(pub_pos);
+  nh.advertise(pub_pos); 
 
   if(Pozyx.begin() == POZYX_FAILURE){
     delay(100);
     abort();
   }
-  Pozyx.clearDevices(NULL);
+  Pozyx.clearDevices(masterTag);
   setAnchorsManual();
   delay(2000);
 }
@@ -61,8 +61,8 @@ void loop()
 {
   coordinates_t position;
 
-  for (int i = 0; i < n_tags; i++){
-    int status = Pozyx.doRemotePositioning(flyingTags[0], &position, dimension,0 ,POZYX_POS_ALG_UWB_ONLY);
+  for (int i = 0; i < NB_TAGS; i++){
+    int status = Pozyx.doRemotePositioning(flyingTags[i], &position, dimension,0 ,POZYX_POS_ALG_UWB_ONLY);
     
     if (status == POZYX_SUCCESS){
       // prints out the result
@@ -71,9 +71,10 @@ void loop()
       // prints out the error code
       printErrorCode("pos", flyingTags[i]);
     }
+    nh.spinOnce();
+    delay(1000);
   }
-  nh.spinOnce();
-  delay(1000);
+  //delay(1000);
 }
 
 
@@ -88,7 +89,7 @@ void setAnchorsManual(){
     anchor.pos.x = anchors_x[i];
     anchor.pos.y = anchors_y[i];
     anchor.pos.z = anchors_z[i];
-    if (POZYX_SUCCESS == Pozyx.addDevice(anchor, flyingTags[0])){
+    if (POZYX_SUCCESS == Pozyx.addDevice(anchor, masterTag)){
       // OK
     }else{
       // configuration Fail
@@ -100,22 +101,13 @@ void setAnchorsManual(){
 void printErrorCode(String operation, uint16_t network_id){
   uint8_t error_code;
   int status = Pozyx.getErrorCode(&error_code, network_id);
+  
   if(status == POZYX_SUCCESS){
-    /*Serial.print("ERROR ");
-    Serial.print(operation);
-    Serial.print(" on ID 0x");
-    Serial.print(network_id, HEX);
-    Serial.print(", error code: 0x");
-    Serial.println(error_code, HEX);*/
     sprintf(msg_pos.data, "ERROR id:%X, error code:%X", network_id, error_code);
     pub_pos.publish( &msg_pos );
 
   }else{
     Pozyx.getErrorCode(&error_code, NULL);
-    /*Serial.print("ERROR ");
-    Serial.print(operation);
-    Serial.print(", couldn't retrieve remote error code, local error: 0x");
-    Serial.println(error_code, HEX);*/
     sprintf(msg_pos.data, "ERROR unknown id, error code:%X", error_code);
     pub_pos.publish( &msg_pos );
   }
@@ -126,7 +118,7 @@ void printCoordinates(uint16_t tag_id, coordinates_t position){
   char hello[13] = "hello world!";
   char mik[75];
   //sprintf(mik, "id: 0x%X - pos: %d ", tag_id, position.x);
-  sprintf(geo_pos.data, "id: 0x%X - pos: %d - %d - %d", tag_id, position.x,  position.y,  position.z);
+  sprintf(geo_pos.data, "id: 0x%X - pos: %d %d %d", tag_id, position.x,  position.y,  position.z);
   //geo_pos.data = mik;
   pub_pos.publish( &geo_pos );
   }
