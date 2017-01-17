@@ -93,16 +93,16 @@ class Orchestrator(object):
                 else:
                     print("Drone is already in the air")
 
-            # if y == 1 Land !
-            if order.angular.y:
-                print("Special order detected: Land")
-                if self.drone.in_the_air is True:
-                    self.drone.in_the_air = False
-                    # Transmit land order
-                    self.pub_land
+                #  if y == 1 Land !
+            elif order.angular.y:
+                    print("Special order detected: Land")
+                    if self.drone.in_the_air is True:
+                        self.drone.in_the_air = False
+                        # Transmit land order
+                        self.pub_land.publish()
 
-                else:
-                    print("Drone is already landed")
+                    else:
+                        print("Drone is already landed")
 
         else:
             # Look for move order
