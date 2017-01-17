@@ -88,13 +88,12 @@ void setAnchorsManual(){
     anchor.pos.x = anchors_x[i];
     anchor.pos.y = anchors_y[i];
     anchor.pos.z = anchors_z[i];
-    if (POZYX_SUCCESS == Pozyx.addDevice(anchor, NULL)){
+    if (POZYX_SUCCESS == Pozyx.addDevice(anchor, flyingTags[0])){
       // OK
     }else{
       // configuration Fail
     }
  }
-
 }
 
 /*Function that print the Error Code*/
@@ -127,7 +126,7 @@ void printCoordinates(uint16_t tag_id, coordinates_t position){
   char hello[13] = "hello world!";
   char mik[75];
   //sprintf(mik, "id: 0x%X - pos: %d ", tag_id, position.x);
-  sprintf(geo_pos.data, "id: 0x%X - pos: %d ", tag_id, position.x);
+  sprintf(geo_pos.data, "id: 0x%X - pos: %d - %d - %d", tag_id, position.x,  position.y,  position.z);
   //geo_pos.data = mik;
   pub_pos.publish( &geo_pos );
   }
