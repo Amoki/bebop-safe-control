@@ -3,6 +3,7 @@
 import rospy
 import math
 import itertools
+import datetime
 
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
@@ -56,7 +57,7 @@ class Orchestrator(object):
             if self.get_distance(a.position, b.position) <= a.size + b.size:
                 will_drone_collide = True
 
-        return will_wall_collide or will_drone_collide
+        return will_wall_collide
 
     def get_distance(self, a, b):
         return math.sqrt(
@@ -92,7 +93,7 @@ class Orchestrator(object):
         '''
         Callback called on new pozyx position
         '''
-        for drone in self.Drones:
+        for drone in self.drones:
             if drone.id == drone_position.id:
                 drone.position = drone_position.position.pose.position
                 drone.orientation = drone_position.position.pose.orientation
@@ -103,7 +104,7 @@ class Orchestrator(object):
         '''
 
         print("\n=============================================")
-        print("Order received, drone is in the air: %s\n" % (self.drone.in_the_air))
+        print("Order received, drone is in the air: %s\n" % (self.drones[0].in_the_air))
         order = Order(twist)
 
         # Check if special is land or take off
