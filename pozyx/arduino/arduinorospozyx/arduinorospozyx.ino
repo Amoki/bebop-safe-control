@@ -27,9 +27,9 @@ uint16_t  masterTag = 0x6F4A;
 
 uint8_t   n_anchors   = 4;
 uint16_t  anchors[4]  = { 0x606B, 0x603B, 0x6037, 0x6F4A};  // THIS IS HARD
-int32_t   anchors_x[4]= { -4400,  -3200,  100,    0     };  // CODDED. YOU
-int32_t   anchors_y[4]= { 2900,   -2200,  2900,   0     };  // MUST CHANGE (mm)
-int32_t   anchors_z[4]= { 0000,   1900,   750,    750   };  // FOR YOUR APP
+int32_t   anchors_x[4]= { 2900, 0000, 2900, 0000};  // CODDED. YOU
+int32_t   anchors_y[4]= { 7900, 0000, 0000, 7900};  // MUST CHANGE (mm)
+int32_t   anchors_z[4]= { 0000, 1650, 1050, 1050};  // FOR YOUR APP
 
 uint8_t   dimension   = POZYX_3D;
 
