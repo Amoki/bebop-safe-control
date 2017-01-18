@@ -1,0 +1,7 @@
+geometry_msgs/Point drone1
+geometry_msgs/Point drone2
+geometry_msgs/Point drone3
+---
+geometry_msgs/Point drone1
+geometry_msgs/Point drone2
+geometry_msgs/Point drone3

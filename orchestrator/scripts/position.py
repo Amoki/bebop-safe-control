@@ -12,7 +12,7 @@ from std_msgs.msg import String
 from std_msgs.msg import UInt16
 from msg import DronePosition
 
-REGEX_STR = "id: 0x([0-9a-fA-F]+) - pos: (\d+) (\d+) (\d+)"
+REGEX_STR = "id: 0x([0-9a-fA-F]+) - pos: (-?\d+) (-?\d+) (-?\d+)"
 
 regex = re.compile(REGEX_STR, re.IGNORECASE)
 
