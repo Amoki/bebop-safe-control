@@ -18,6 +18,8 @@ def callback_ros(data):
     #""".format(
     #   jdehfvn= data.azerty
     #)
+    print("Roll\t sens = %2s") % (data.finger_roll)
+
     print("Palm\t\t\ndirection[%5.2s,%5.2s,%5.2s]\t\nnormal[%5.2s,%5.2s,%5.2s]\t\npalmpos[%5.2s,%5.2s,%5.2s]\t\nypr[%5.2s,%5.2s,%5.2s]\t\n" % (
         data.direction.x,data.direction.y,data.direction.z,
         data.normal.x,data.normal.y,data.normal.z,

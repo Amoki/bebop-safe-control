@@ -33,6 +33,7 @@ def sender():
         hand_pitch_       = li.get_hand_pitch()
         hand_roll_        = li.get_hand_roll()
         hand_yaw_         = li.get_hand_yaw()
+        finger_roll       = li.get_clockwiseness()
 
         msg = leapros()
         msg.direction.x = hand_direction_[0]
@@ -47,6 +48,7 @@ def sender():
         msg.ypr.x = hand_yaw_
         msg.ypr.y = hand_pitch_
         msg.ypr.z = hand_roll_
+        msg.finger_roll = finger_roll
 
         fingerNames = ['thumb', 'index', 'middle', 'ring', 'pinky']
         fingerPointNames = ['metacarpal', 'proximal',
