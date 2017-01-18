@@ -170,13 +170,7 @@ class Orchestrator(object):
 def run():
     rospy.init_node('orchestrator')
 
-<<<<<<< Updated upstream
-    orchestrator = Orchestrator()
-
-    print("Orchestrator init\n")
-=======
     Orchestrator()
->>>>>>> Stashed changes
 
     rospy.spin()
 
