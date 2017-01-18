@@ -28,7 +28,7 @@ class Orchestrator(object):
         self.pub_bebop = rospy.Publisher('bebop/cmd_vel', Twist, queue_size=10)
 
         rospy.Subscriber("/position", PoseStamped, self.callback_position)
-        rospy.Subscriber("/order", Twist, self.callback_order)
+        rospy.Subscriber("leapmotion/order", Twist, self.callback_order)
 
         rospy.Subscriber("/clicked_point", PointStamped, self.callback_clicked_point)
 
@@ -93,16 +93,16 @@ class Orchestrator(object):
                 else:
                     print("Drone is already in the air")
 
-            # if y == 1 Land !
-            if order.angular.y:
-                print("Special order detected: Land")
-                if self.drone.in_the_air is True:
-                    self.drone.in_the_air = False
-                    # Transmit land order
-                    self.pub_land
+                #  if y == 1 Land !
+            elif order.angular.y:
+                    print("Special order detected: Land")
+                    if self.drone.in_the_air is True:
+                        self.drone.in_the_air = False
+                        # Transmit land order
+                        self.pub_land.publish()
 
-                else:
-                    print("Drone is already landed")
+                    else:
+                        print("Drone is already landed")
 
         else:
             # Look for move order
@@ -137,6 +137,7 @@ def run():
     rospy.init_node('orchestrator')
 
     orchestrator = Orchestrator()
+
     print("Orchestrator init\n")
 
     rospy.spin()
