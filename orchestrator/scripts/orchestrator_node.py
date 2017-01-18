@@ -3,7 +3,6 @@
 import rospy
 import math
 import itertools
-import datetime
 
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
@@ -61,7 +60,7 @@ class Orchestrator(object):
                 will_drone_collide = True
                 break
 
-        return will_wall_collide
+        return will_wall_collide or will_drone_collide
 
     def get_distance(self, a, b):
         return math.sqrt(
