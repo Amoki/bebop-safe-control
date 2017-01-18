@@ -19,7 +19,7 @@ regex = re.compile(REGEX_STR, re.IGNORECASE)
 
 class Converter(object):
     def __init__(self):
-        self.pub_position = rospy.Publisher('/position', PoseStamped, queue_size=10)
+        self.pub_position = rospy.Publisher('/position', DronePosition, queue_size=10)
         rospy.Subscriber("/pos", String, self.callback)
         self.seq = 0
         self.frame_id = 0

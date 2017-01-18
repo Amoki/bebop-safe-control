@@ -5,7 +5,6 @@ import math
 import itertools
 
 from geometry_msgs.msg import PointStamped
-from geometry_msgs.msg import PoseStamped
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from std_msgs.msg import Header
