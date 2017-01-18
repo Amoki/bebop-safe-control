@@ -27,7 +27,7 @@ class Converter(object):
     def callback(self, serial):
         string = serial.data
         if regex.search(string) is not None:
-            id = int(regex.search(string).group(1))
+            id = int(regex.search(string).group(1), 0)  # convert string hexa to int
             x = int(regex.search(string).group(2))
             y = int(regex.search(string).group(3))
             z = int(regex.search(string).group(4))

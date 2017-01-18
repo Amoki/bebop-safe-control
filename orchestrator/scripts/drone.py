@@ -9,20 +9,23 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 from std_msgs.msg import Header
 
-DRONE_RADIUS = 0.16  # m
+BEBOP_RADIUS = 0.16  # m
 
 
 class Drone(object):
+    DRONE_INDEX = 0
     position = Point()
     orientation = Quaternion()
 
     future_position = Point()
     future_orientation = Quaternion()
 
-    size = DRONE_RADIUS
+    size = BEBOP_RADIUS
     in_the_air = False
 
-    def __init__(self, index, x, y, z):
+    def __init__(self, id, x, y, z):
+        Drone.DRONE_INDEX += 1
+        index = Drone.DRONE_INDEX
         self.pub_position = rospy.Publisher('drone_pose%d' % index, PointStamped, queue_size=10)
         self.pub_take_off = rospy.Publisher('bebop%d/takeoff' % index, Empty, queue_size=10)
         self.pub_land = rospy.Publisher('bebop%d/land' % index, Empty, queue_size=10)
@@ -31,6 +34,7 @@ class Drone(object):
         self.position.x = x
         self.position.y = y
         self.position.z = z
+        self.id = id
 
     def __str__(self):
         return '%s' % self.position

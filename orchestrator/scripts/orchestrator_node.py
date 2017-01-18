@@ -10,6 +10,7 @@ from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from std_msgs.msg import Header
 from orchestrator.srv import GetNearestObstacles
+from orchestrator.msg import DronePosition
 
 from drone import Drone
 from order import Order
@@ -17,7 +18,7 @@ from order import Order
 
 class Orchestrator(object):
     def __init__(self):
-        self.drones = [Drone(1, 47.0, 40.0, 1.0), Drone(2, 45.0, 40.0, 1.0), Drone(3, 43.0, 40.0, 1.0)]
+        self.drones = [Drone(0x683D, 47.0, 40.0, 1.0), Drone(0x683E, 45.0, 40.0, 1.0), Drone(0x683F, 43.0, 40.0, 1.0)]
 
         # Communication with rviz
         self.pub_collision_point1 = rospy.Publisher('collision_point1', PointStamped, queue_size=10)
@@ -25,7 +26,7 @@ class Orchestrator(object):
         self.pub_collision_point3 = rospy.Publisher('collision_point3', PointStamped, queue_size=10)
         rospy.Subscriber("/clicked_point", PointStamped, self.callback_clicked_point)
 
-        rospy.Subscriber("/position", PoseStamped, self.callback_position)
+        rospy.Subscriber("/position", DronePosition, self.callback_position)
         rospy.Subscriber("leapmotion/order", Twist, self.callback_order)
 
         rospy.wait_for_service('get_nearest_obstacles')
@@ -88,12 +89,14 @@ class Orchestrator(object):
         for drone in self.drones:
             drone.publish_future_pose()
 
-    def callback_position(self, pose_stamped):
+    def callback_position(self, drone_position):
         '''
         Callback called on new pozyx position
         '''
-        self.drone.position = pose_stamped.pose.position
-        self.drone.orientation = pose_stamped.pose.orientation
+        for drone in self.Drones:
+            if drone.id == drone_position.id:
+                drone.position = drone_position.position.pose.position
+                drone.orientation = drone_position.position.pose.orientation
 
     def callback_order(self, twist):
         '''
