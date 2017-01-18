@@ -18,6 +18,11 @@ from order import Order
 
 class Orchestrator(object):
     def __init__(self):
+        # Wait for services first
+        rospy.wait_for_service('get_nearest_obstacles')
+        self.get_nearest_obstacles = rospy.ServiceProxy('get_nearest_obstacles', GetNearestObstacles)
+
+        # TODO: use launch config
         self.drones = [Drone(0x683D, 47.0, 40.0, 1.0), Drone(0x683E, 45.0, 40.0, 1.0), Drone(0x683F, 43.0, 40.0, 1.0)]
 
         # Communication with rviz
@@ -28,9 +33,6 @@ class Orchestrator(object):
 
         rospy.Subscriber("/position", DronePosition, self.callback_position)
         rospy.Subscriber("leapmotion/order", Twist, self.callback_order)
-
-        rospy.wait_for_service('get_nearest_obstacles')
-        self.get_nearest_obstacles = rospy.ServiceProxy('get_nearest_obstacles', GetNearestObstacles)
 
         print("Orchestrator init\n")
 
@@ -54,8 +56,10 @@ class Orchestrator(object):
         # check collision with one another drone
         will_drone_collide = False
         for a, b in itertools.combinations(self.drones, 2):
+            # loop over drone 2 by 2 without repetition
             if self.get_distance(a.position, b.position) <= a.size + b.size:
                 will_drone_collide = True
+                break
 
         return will_wall_collide
 
