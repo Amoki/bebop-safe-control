@@ -8,6 +8,7 @@ from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
 from geometry_msgs.msg import Point
 from std_msgs.msg import Header
+from nav_msgs.srv import GetMap
 from orchestrator.srv import GetNearestObstacles
 from orchestrator.msg import DronePosition
 
@@ -21,8 +22,15 @@ class Orchestrator(object):
         rospy.wait_for_service('get_nearest_obstacles')
         self.get_nearest_obstacles = rospy.ServiceProxy('get_nearest_obstacles', GetNearestObstacles)
 
+        rospy.wait_for_service('static_map')
+        get_map = rospy.ServiceProxy('static_map', GetMap)
+        retrieved_map = get_map()
+
+        self.map_resolution = retrieved_map.map.info.resolution
+        self.position_resolution = 0.001
+
         # TODO: use launch config
-        self.drones = [Drone(0x683D, 47.0, 40.0, 1.0), Drone(0x683E, 45.0, 40.0, 1.0), Drone(0x683F, 43.0, 40.0, 1.0)]
+        self.drones = [Drone(0x683D, 47.0, 40.0, 1.0)]
 
         # Communication with rviz
         self.pub_collision_point1 = rospy.Publisher('collision_point1', PointStamped, queue_size=10)
@@ -92,14 +100,31 @@ class Orchestrator(object):
         for drone in self.drones:
             drone.publish_future_pose()
 
+    def publish_pose(self):
+        '''
+        debug method for map visualisation
+        '''
+        for drone in self.drones:
+            drone.publish_pose()
+
+    def ajust_position_resolution(self, position):
+        return Point(
+            x=position.x * self.position_resolution,
+            y=position.y * self.position_resolution,
+            z=position.z * self.position_resolution,
+        )
+
     def callback_position(self, drone_position):
         '''
         Callback called on new pozyx position
         '''
+        position_id = int(drone_position.id.data)
         for drone in self.drones:
-            if drone.id == drone_position.id:
-                drone.position = drone_position.position.pose.position
+            if drone.id == position_id:
+                drone.position = self.ajust_position_resolution(drone_position.position.pose.position)
+                print(drone.position)
                 drone.orientation = drone_position.position.pose.orientation
+        self.publish_pose()
 
     def callback_order(self, twist):
         '''
@@ -149,22 +174,22 @@ class Orchestrator(object):
         Callback called on new publish point on rviz position
         '''
         self.drones[0].future_position = Point(
-            x=point_stamped.point.x - 2,
-            y=point_stamped.point.y,
-            z=point_stamped.point.z
-        )
-
-        self.drones[1].future_position = Point(
             x=point_stamped.point.x,
             y=point_stamped.point.y,
             z=point_stamped.point.z
         )
 
-        self.drones[2].future_position = Point(
-            x=point_stamped.point.x + 2,
-            y=point_stamped.point.y,
-            z=point_stamped.point.z
-        )
+        # self.drones[1].future_position = Point(
+        #     x=point_stamped.point.x,
+        #     y=point_stamped.point.y,
+        #     z=point_stamped.point.z
+        # )
+
+        # self.drones[2].future_position = Point(
+        #     x=point_stamped.point.x + 2,
+        #     y=point_stamped.point.y,
+        #     z=point_stamped.point.z
+        # )
 
         self.publish_future_pose()
         self.will_collide()
