@@ -3,6 +3,7 @@ geometry_msgs/Vector3 direction
 geometry_msgs/Vector3 normal
 geometry_msgs/Point palmpos
 geometry_msgs/Vector3 ypr
+float64 finger_roll
 geometry_msgs/Point thumb_metacarpal
 geometry_msgs/Point thumb_proximal
 geometry_msgs/Point thumb_intermediate

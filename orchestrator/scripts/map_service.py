@@ -8,9 +8,21 @@ from os.path import dirname, abspath
 
 from nav_msgs.srv import GetMap
 from geometry_msgs.msg import Point
-from orchestrator.srv import GetNearestObstacle
+from orchestrator.srv import GetNearestObstacles
 
 import timeit
+
+
+class MappedDrone(object):
+    def __init__(self, position, resolution):
+        self.position = position
+        self.relative_position = Point(
+            x=position.x / resolution,
+            y=position.y / resolution,
+            z=position.z / resolution
+        )
+        self.obstacle_position = Point()
+        self.min_distance = float('inf')
 
 
 class Map(object):
@@ -41,18 +53,18 @@ class Map(object):
     def map_index(self, i, j):
         return i + j * self.info.width
 
-    def handle_get_nearest_obstacle(self, req):
+    def handle_get_nearest_obstacles(self, req):
         start_time = timeit.default_timer()
-        position = req.position
+
         resolution = self.info.resolution
-        relative_x = position.x / resolution
-        relative_y = position.y / resolution
-        relative_z = position.z / resolution
+
+        drones = [
+            MappedDrone(req.drone1, resolution),
+            MappedDrone(req.drone2, resolution),
+            MappedDrone(req.drone3, resolution)
+        ]
 
         # optimisations:
-        min_dist = float('inf')
-        obstacle_x = float()
-        obstacle_y = float()
         dist_sq = float()
         data = self.data
         map_index = self.map_index
@@ -60,35 +72,36 @@ class Map(object):
         # loop over each pixel of the map
         for i, j in itertools.product(xrange(self.info.width), xrange(self.info.height)):
             if data[map_index(i, j)] == 100:
-                dist_sq = (i - relative_x) ** 2 + (j - relative_y) ** 2
-                if dist_sq < min_dist:
-                    min_dist = dist_sq
-                    obstacle_x = i
-                    obstacle_y = j
+                for drone in drones:
+                    # get distance between this point and the drone
+                    dist_sq = (i - drone.relative_position.x) ** 2 + (j - drone.relative_position.y) ** 2
+                    # if this distance is the shortest
+                    if dist_sq < drone.min_distance:
+                        drone.min_distance = dist_sq
+                        drone.obstacle_position.x = i
+                        drone.obstacle_position.y = j
 
-        min_dist = math.sqrt(min_dist)
-        obstacle_x = obstacle_x * resolution
-        obstacle_y = obstacle_y * resolution
-        obstacle_z = relative_z * resolution  # the z of the drone itself
+        for drone in drones:
+            drone.min_distance = math.sqrt(drone.min_distance)
+            drone.obstacle_position.x = drone.obstacle_position.x * resolution
+            drone.obstacle_position.y = drone.obstacle_position.y * resolution
+            drone.obstacle_position.z = drone.relative_position.z * resolution  # the z of the drone itself
 
-        if self.roof - relative_z < min_dist:
-            min_dist = self.roof - relative_z
-            obstacle_x = position.x  # the x of the drone
-            obstacle_y = position.y  # the y of the drone
-            obstacle_z = self.ROOF_CM  # the z of the roof
+            if self.roof - drone.relative_position.z < drone.min_distance:
+                drone.min_distance = self.roof - drone.relative_position.z
+                drone.obstacle_position.x = drone.position.x  # the x of the drone
+                drone.obstacle_position.y = drone.position.y  # the y of the drone
+                drone.obstacle_position.z = self.ROOF_CM  # the z of the roof
 
         print timeit.default_timer() - start_time
-        return Point(
-            x=obstacle_x,
-            y=obstacle_y,
-            z=obstacle_z
-        )
+
+        return [drone.obstacle_position for drone in drones]
 
 
 def run():
-    rospy.init_node('get_nearest_obstacle')
+    rospy.init_node('get_nearest_obstacles')
     map_handler = Map()
-    rospy.Service('get_nearest_obstacle', GetNearestObstacle, map_handler.handle_get_nearest_obstacle)
+    rospy.Service('get_nearest_obstacles', GetNearestObstacles, map_handler.handle_get_nearest_obstacles)
     rospy.spin()
 
 

@@ -5,6 +5,8 @@ import argparse
 
 import rospy
 import leap_interface
+import datetime
+
 from leap_motion.msg import leap
 from leap_motion.msg import leapros
 
@@ -25,6 +27,7 @@ def sender():
     #pub     = rospy.Publisher('leapmotion/raw',leap,queue_size=1)
     pub_ros   = rospy.Publisher('leapmotion/data',leapros,queue_size=1)
     rospy.init_node(NODENAME)
+    rate = rospy.Rate(4) # 4hz
 
     while not rospy.is_shutdown():
         hand_direction_   = li.get_hand_direction()
@@ -33,6 +36,7 @@ def sender():
         hand_pitch_       = li.get_hand_pitch()
         hand_roll_        = li.get_hand_roll()
         hand_yaw_         = li.get_hand_yaw()
+        finger_roll       = li.get_clockwiseness()
 
         msg = leapros()
         msg.direction.x = hand_direction_[0]
@@ -47,6 +51,7 @@ def sender():
         msg.ypr.x = hand_yaw_
         msg.ypr.y = hand_pitch_
         msg.ypr.z = hand_roll_
+        msg.finger_roll = finger_roll
 
         fingerNames = ['thumb', 'index', 'middle', 'ring', 'pinky']
         fingerPointNames = ['metacarpal', 'proximal',
@@ -59,9 +64,11 @@ def sender():
                             dimName, pos[iDim])
 
         # We don't publish native data types, see ROS best practices
-        #pub.publish(hand_direction=hand_direction_,hand_normal = hand_normal_, hand_palm_pos = hand_palm_pos_, hand_pitch = hand_pitch_, hand_roll = hand_roll_, hand_yaw = hand_yaw_)
+        # pub.publish(hand_direction=hand_direction_,hand_normal = hand_normal_, hand_palm_pos = hand_palm_pos_, hand_pitch = hand_pitch_, hand_roll = hand_roll_, hand_yaw = hand_yaw_)
         pub_ros.publish(msg)
-        rospy.sleep(rospy.get_param(PARAMNAME_FREQ_ENTIRE, FREQUENCY_ROSTOPIC_DEFAULT))
+        print("%s" % datetime.datetime.now())
+        # rospy.sleep(rospy.get_param(PARAMNAME_FREQ_ENTIRE, FREQUENCY_ROSTOPIC_DEFAULT))
+        rate.sleep()
 
 
 

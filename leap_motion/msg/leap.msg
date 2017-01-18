@@ -6,3 +6,4 @@ float64[3] hand_palm_pos
 float64 hand_pitch
 float64 hand_roll
 float64 hand_yaw
+float64 finger_roll
