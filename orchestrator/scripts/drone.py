@@ -45,6 +45,12 @@ class Drone(object):
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
 
+    def publish_pose(self):
+        self.pub_position.publish(PointStamped(
+            point=self.position,
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
+
     def take_off(self):
         if self.in_the_air is False:
             self.in_the_air = True
