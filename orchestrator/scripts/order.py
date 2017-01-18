@@ -57,25 +57,26 @@ class Order(object):
 
         Acceptable range for all fields are [-1;1]
         '''
-        speed = 0.2
+        speed = 0.15
+
+        print("\nLinear X(F/R): %2.4s\tLinear Y(L/R): %2.4s\tLinear Z(U/D): %2.4s\n") % (self.linear.x, self.linear.y, self.linear.z)
 
         if self.linear.y > 0:
             print("Drone order is to go left\n")
-            y = speed
+            x = speed
         elif self.linear.y < 0:
             print("Drone order is to go right\n")
-            y = -speed
-        else:
-            y = 0
-
-        if self.linear.x > 0:
-            print("Drone order is to go forward\n")
-            x = speed
-        elif self.linear.x < 0:
-            print("Drone order is to go backward\n")
             x = -speed
         else:
             x = 0
+        if self.linear.x > 0:
+            print("Drone order is to go backward\n")
+            y = -speed
+        elif self.linear.x < 0:
+            print("Drone order is to go forward\n")
+            y = speed
+        else:
+            y = 0
 
         if self.linear.z > 0:
             print("Drone order is to go up\n")
@@ -86,23 +87,17 @@ class Order(object):
         else:
             z = 0
 
-        print("\n")
-
         linear_vector = Vector3(
             x=x,  # left/right
             y=y,  # forward/rearward
             z=z  # upward/downward
         )
 
-        print("Linear Vector3 initialized")
-
         angular_vector = Vector3(
             x=0,
             y=0,
             z=0
         )
-
-        print("Angular Vector3 initialized")
 
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
 

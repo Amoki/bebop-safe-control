@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <launch>
-    <arg name="namespace" default="bebop" />
+    <arg name="namespace" default="bebop1" />
     <arg name="ip" default="192.168.42.1" />
     <arg name="config_file" default="$(find bebop_driver)/config/defaults.yaml" />
     <arg name="camera_info_url" default="package://bebop_driver/data/bebop_camera_calib.yaml" />

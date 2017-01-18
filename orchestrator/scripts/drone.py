@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 from std_msgs.msg import Header
 
-BEBOP_RADIUS = 0.16  # m
+BEBOP_RADIUS = 0.50  # m
 
 
 class Drone(object):
@@ -42,6 +42,12 @@ class Drone(object):
     def publish_future_pose(self):
         self.pub_position.publish(PointStamped(
             point=self.future_position,
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
+
+    def publish_pose(self):
+        self.pub_position.publish(PointStamped(
+            point=self.position,
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
 

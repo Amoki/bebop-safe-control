@@ -28,7 +28,7 @@ class MappedDrone(object):
 class Map(object):
     data = None
     info = None
-    ROOF_CM = 2.5  # cm
+    ROOF_CM = 50  # m
     roof = None
 
     def __init__(self):
