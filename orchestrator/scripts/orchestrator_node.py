@@ -3,6 +3,7 @@
 import rospy
 import math
 import itertools
+import datetime
 
 from geometry_msgs.msg import PointStamped
 from geometry_msgs.msg import Twist
@@ -28,9 +29,10 @@ class Orchestrator(object):
 
         self.map_resolution = retrieved_map.map.info.resolution
         self.position_resolution = 0.001
+        self.take_off_date = datetime.datetime.now()
 
         # TODO: use launch config
-        self.drones = [Drone(0x683D, 47.0, 40.0, 1.0)]
+        self.drones = [Drone(0x683D, 47.0, 40.0, 1.0), Drone(0x683D, 47.0, 40.0, 1.0), Drone(0x683D, 47.0, 40.0, 1.0)]
 
         # Communication with rviz
         self.pub_collision_point1 = rospy.Publisher('collision_point1', PointStamped, queue_size=10)
@@ -84,14 +86,14 @@ class Orchestrator(object):
             point=positions[0],
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
-        self.pub_collision_point2.publish(PointStamped(
-            point=positions[1],
-            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
-        ))
-        self.pub_collision_point3.publish(PointStamped(
-            point=positions[2],
-            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
-        ))
+        # self.pub_collision_point2.publish(PointStamped(
+        #     point=positions[1],
+        #     header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        # ))
+        # self.pub_collision_point3.publish(PointStamped(
+        #     point=positions[2],
+        #     header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        # ))
 
     def publish_future_pose(self):
         '''
@@ -122,7 +124,6 @@ class Orchestrator(object):
         for drone in self.drones:
             if drone.id == position_id:
                 drone.position = self.ajust_position_resolution(drone_position.position.pose.position)
-                print(drone.position)
                 drone.orientation = drone_position.position.pose.orientation
         self.publish_pose()
 
@@ -141,32 +142,37 @@ class Orchestrator(object):
             print("Special order detected: Take off")
             for drone in self.drones:
                 drone.take_off()
+                self.take_off_date = datetime.datetime.now()
+
         # if y == 1 Land !
-        elif order.angular.y:
+        elif order.angular.y == 1:
             print("Special order detected: Land")
             for drone in self.drones:
                 drone.land()
         else:
-            # Look for move order
-            distance_twist = order.transform_to_distance_twist()
-            for drone in self.drones:
-                drone.future_position = Point(
-                    x=drone.position.x + distance_twist.linear.x,
-                    y=drone.position.y + distance_twist.linear.y,
-                    z=drone.position.z + distance_twist.linear.z
-                )
+            if any([drone.in_the_air is True for drone in self.drones]):
+                # if take_off is over
+                if (datetime.datetime.now() - self.take_off_date).seconds >= 4:
+                    # Look for move order
+                    distance_twist = order.transform_to_distance_twist()
+                    for drone in self.drones:
+                        drone.future_position = Point(
+                            x=drone.position.x + distance_twist.linear.x,
+                            y=drone.position.y + distance_twist.linear.y,
+                            z=drone.position.z + distance_twist.linear.z
+                        )
 
-            if self.will_collide():
-                print('Unable to execute this order\n')
-                # Send stabilization order
-                for drone in self.drones:
-                    drone.send_bebop_order(Twist())
-            else:
-                print("Order execution validated no collision point detected \n")
-                bebop_twist = order.transform_to_bebop_twist()
-                print("Sending movement order to bebop\n")
-                for drone in self.drones:
-                    drone.send_bebop_order(bebop_twist)
+                    if self.will_collide():
+                        print('Unable to execute this order\n')
+                        # Send stabilization order
+                        for drone in self.drones:
+                            drone.send_bebop_order(Twist())
+                    else:
+                        print("Order execution validated no collision point detected \n")
+                        bebop_twist = order.transform_to_bebop_twist()
+                        print("Sending movement order to bebop\n")
+                        for drone in self.drones:
+                            drone.send_bebop_order(bebop_twist)
 
     def callback_clicked_point(self, point_stamped):
         '''
