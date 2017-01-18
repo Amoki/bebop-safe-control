@@ -1,0 +1,9 @@
+<launch>
+
+	<!-- Launch the sender service -->
+	<node pkg="leap_motion" name="sender" type="sender.py" output="screen"/>
+
+	<!-- Launch the manager -->
+	<node pkg="leap_motion" name="leap_manager" type="leap_manager.py" output="screen"/>
+
+</launch>
