@@ -5,6 +5,7 @@ import rospy
 from leap_motion.msg import leap
 from leap_motion.msg import leapros
 
+
 # Native datatypes, I've heard this is bad practice, use the geometry messages instead.
 # def callback(data):
 #    rospy.loginfo(rospy.get_name() + ": Leap Raw Data %5.2s" % data)
@@ -18,7 +19,6 @@ def callback_ros(data):
     #""".format(
     #   jdehfvn= data.azerty
     #)
-    print("%s" % datetime.datetime.now())
 
     print("Roll\t sens = %2s") % (data.finger_roll)
 
