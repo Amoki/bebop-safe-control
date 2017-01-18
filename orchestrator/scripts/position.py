@@ -10,7 +10,7 @@ from geometry_msgs.msg import Quaternion
 from std_msgs.msg import Header
 from std_msgs.msg import String
 from std_msgs.msg import UInt16
-from msg import DronePosition
+from orchestrator.msg import DronePosition
 
 REGEX_STR = "id: 0x([0-9a-fA-F]+) - pos: (-?\d+) (-?\d+) (-?\d+)"
 
@@ -33,17 +33,16 @@ class Converter(object):
             z = int(regex.search(string).group(4))
             self.seq += 1
             self.pub_position.publish(
-                DronePosition
-                    UInt16(
-                        id  =  id
-                        ),
-                    PoseStamped(
+                DronePosition(
+                    id=UInt16(id),
+                    position=PoseStamped(
                         pose=Pose(
                             position=Point(x=x, y=y, z=z),
                             orientation=Quaternion()
                         ),
                         header=Header(seq=self.seq, frame_id='map', stamp=rospy.Time.now())
                     )
+                )
             )
 
 
