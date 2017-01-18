@@ -52,15 +52,13 @@ class Orchestrator(object):
         '''
 
         # Check collision with wall
-        obstacle_positions = self.get_nearest_obstacles(*[d.future_position for d in self.drones])
-        positions = [obstacle_positions.drone1, obstacle_positions.drone2, obstacle_positions.drone3]
+        obstacle_positions = self.get_nearest_obstacles([d.future_position for d in self.drones]).positions
+        self.publish_collisions(obstacle_positions)
 
         will_wall_collide = False
-        for drone, obstacle_position in zip(self.drones, positions):
+        for drone, obstacle_position in zip(self.drones, obstacle_positions):
             if self.get_distance(drone.future_position, obstacle_position) <= drone.size:
                 will_wall_collide = True
-
-        self.publish_collisions(positions)
 
         # check collision with one another drone
         will_drone_collide = False
@@ -70,7 +68,7 @@ class Orchestrator(object):
                 will_drone_collide = True
                 break
 
-        return will_wall_collide #or will_drone_collide
+        return will_wall_collide or will_drone_collide
 
     def get_distance(self, a, b):
         return math.sqrt(
