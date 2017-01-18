@@ -69,4 +69,7 @@ void loop()
   delay(1000);
 }
 ```
--
+
+## Debug
+To see what's going on the COM Port tape the following command (you need to have downloaded it pyserial)
+`$ sudo python ~/Téléchargements/pyserial-3.2.1/examples/wxTerminal.py`

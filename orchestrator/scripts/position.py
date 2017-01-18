@@ -9,6 +9,8 @@ from geometry_msgs.msg import Point
 from geometry_msgs.msg import Quaternion
 from std_msgs.msg import Header
 from std_msgs.msg import String
+from std_msgs.msg import UInt16
+from msg import DronePosition
 
 REGEX_STR = "id: 0x([0-9a-fA-F]+) - pos: (\d+) (\d+) (\d+)"
 
@@ -25,19 +27,23 @@ class Converter(object):
     def callback(self, serial):
         string = serial.data
         if regex.search(string) is not None:
-            id = regex.search(string).group(1)
+            id = int(regex.search(string).group(1))
             x = int(regex.search(string).group(2))
             y = int(regex.search(string).group(3))
             z = int(regex.search(string).group(4))
             self.seq += 1
             self.pub_position.publish(
-                PoseStamped(
-                    pose=Pose(
-                        position=Point(x=x, y=y, z=z),
-                        orientation=Quaternion()
-                    ),
-                    header=Header(seq=self.seq, frame_id='map', stamp=rospy.Time.now())
-                )
+                DronePosition
+                    UInt16(
+                        id  =  id
+                        ),
+                    PoseStamped(
+                        pose=Pose(
+                            position=Point(x=x, y=y, z=z),
+                            orientation=Quaternion()
+                        ),
+                        header=Header(seq=self.seq, frame_id='map', stamp=rospy.Time.now())
+                    )
             )
 
 

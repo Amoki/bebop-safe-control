@@ -14,32 +14,34 @@
 #include <Pozyx_definitions.h>
 #include <Pozyx.h>
 
-//#include <geometry_msgs/PoseStamped.h>
 #include <std_msgs/String.h>
+
+///////////////// PARAMETERS ////////////////
 
 #define USB_CON
 #define NB_TAGS 1
-///////////////// PARAMETERS ////////////////
+
 /* Pozyx */
 uint16_t  flyingTags[NB_TAGS]= {0x683D};
 uint16_t  masterTag = 0x6F4A;
 
 uint8_t   n_anchors   = 4;
-uint16_t  anchors[4]  = { 0x606B, 0x603B, 0x6037, 0x603A};  // THIS IS HARD
-int32_t   anchors_x[4]= { 2000,   2000,   3600,   2000  };  // CODDED. YOU
-int32_t   anchors_y[4]= { 3200,   2000,   3600,   0000  };  // MUST CHANGE (mm)
-int32_t   anchors_z[4]= { 0600,   0600,   0000,   0000  };  // FOR YOUR APP
+uint16_t  anchors[4]  = { 0x606B, 0x603B, 0x6037, 0x6F4A};  // THIS IS HARD
+int32_t   anchors_x[4]= { -3000,   2000,   -3000,   0  };  // CODDED. YOU
+int32_t   anchors_y[4]= { -6000,   -4000,   0000,   0  };  // MUST CHANGE (mm)
+int32_t   anchors_z[4]= { 0000,   1200,   1200,   1200  };  // FOR YOUR APP
 
 uint8_t   dimension   = POZYX_3D;
 
 /* Ros */
 ros::NodeHandle  nh;
 
-//geometry_msgs::PoseStamped geo_pos;
 std_msgs::String geo_pos;
 std_msgs::String msg_pos;
 
 ros::Publisher pub_pos("pos",  &geo_pos);
+//ros::Publisher pub_mdg("pos",  &msg_pos);
+
 
 /////////////////////////////////////////////
 void setup()
@@ -52,8 +54,11 @@ void setup()
     abort();
   }
   Pozyx.clearDevices(masterTag);
+  //Pozyx.setOperationMode(POZYX_TAG_MODE,0x683D);
   setAnchorsManual();
+  setTagsManual();
   delay(2000);
+  
 }
 
 /////////////////////////////////////////////
@@ -89,12 +94,27 @@ void setAnchorsManual(){
     anchor.pos.x = anchors_x[i];
     anchor.pos.y = anchors_y[i];
     anchor.pos.z = anchors_z[i];
-    if (POZYX_SUCCESS == Pozyx.addDevice(anchor, masterTag)){
+
+    Pozyx.setOperationMode(POZYX_ANCHOR_MODE,anchors[i]);
+
+    for(int i = 0; i < NB_TAGS; i++){
+      if (POZYX_SUCCESS == Pozyx.addDevice(anchor, flyingTags[0])){
       // OK
-    }else{
-      // configuration Fail
+      }
+     }
+  }
+
+}
+
+/*Function that set the flying tags*/
+void setTagsManual(){
+
+  for(int i = 0; i < NB_TAGS; i++){
+    if (POZYX_SUCCESS == Pozyx.setOperationMode(POZYX_TAG_MODE,flyingTags[i])){
+      // OK
     }
- }
+  }
+
 }
 
 /*Function that print the Error Code*/
@@ -121,4 +141,4 @@ void printCoordinates(uint16_t tag_id, coordinates_t position){
   sprintf(geo_pos.data, "id: 0x%X - pos: %d %d %d", tag_id, position.x,  position.y,  position.z);
   //geo_pos.data = mik;
   pub_pos.publish( &geo_pos );
-  }
+}
