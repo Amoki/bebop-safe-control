@@ -9,7 +9,7 @@ from geometry_msgs.msg import Twist
 from std_msgs.msg import Empty
 from std_msgs.msg import Header
 
-BEBOP_RADIUS = 0.16  # m
+BEBOP_RADIUS = 0.50  # m
 
 
 class Drone(object):
