@@ -57,32 +57,31 @@ class Order(object):
 
         Acceptable range for all fields are [-1;1]
         '''
-        speed = 0.2
 
-        if self.linear.y > 0:
+        if self.linear.y > 0.1:
             print("Drone order is to go left\n")
-            y = speed
-        elif self.linear.y < 0:
+            y = self.linear.y*10
+        elif self.linear.y < -0.1:
             print("Drone order is to go right\n")
-            y = -speed
+            y = -self.linear.y*10
         else:
             y = 0
 
-        if self.linear.x > 0:
+        if self.linear.x > 0.1:
             print("Drone order is to go forward\n")
-            x = speed
-        elif self.linear.x < 0:
+            x = self.linear.y*10
+        elif self.linear.x < -0.1:
             print("Drone order is to go backward\n")
-            x = -speed
+            x = -self.linear.y*10
         else:
             x = 0
 
-        if self.linear.z > 0:
+        if self.linear.z > 0.1:
             print("Drone order is to go up\n")
-            z = speed
-        elif self.linear.z < 0:
+            z = self.linear.y*10
+        elif self.linear.z < -0.1:
             print("Drone order is to go down\n")
-            z = -speed
+            z = -self.linear.y*10
         else:
             z = 0
 
@@ -105,6 +104,15 @@ class Order(object):
         print("Angular Vector3 initialized")
 
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
+
+        print("Leap_order = [%s;%s;%s][%s;%s;%s]\n" % (
+            self.linear.x,
+            self.linear.y,
+            self.linear.z,
+            self.angular.x,
+            self.angular.y,
+            self.angular.z
+            ))
 
         print("bebop_twist = [%s;%s;%s][%s;%s;%s]\n" % (
             linear_vector.x,
