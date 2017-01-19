@@ -22,7 +22,7 @@ def sender():
     #pub     = rospy.Publisher('leapmotion/raw',leap,queue_size=1)
     pub_ros   = rospy.Publisher('leapmotion/data',leapros,queue_size=1)
     rospy.init_node(NODENAME)
-    rate = rospy.Rate(3) # 4hz
+    rate = rospy.Rate(40) # 4hz
 
     while not rospy.is_shutdown():
         hand_direction_   = li.get_hand_direction()

@@ -52,7 +52,7 @@ class Orchestrator(object):
         '''
 
         # Check collision with wall
-        obstacle_positions = self.get_nearest_obstacles([d.future_position for d in self.drones]).positions
+        '''obstacle_positions = self.get_nearest_obstacles([d.future_position for d in self.drones]).positions
         self.publish_collisions(obstacle_positions)
 
         will_wall_collide = False
@@ -69,7 +69,7 @@ class Orchestrator(object):
                 break
 
         return will_wall_collide or will_drone_collide
-
+'''
     def get_distance(self, a, b):
         return math.sqrt(
             (b.x - a.x) ** 2 +
@@ -167,7 +167,7 @@ class Orchestrator(object):
                             drone.send_bebop_order(Twist())
                     else:
                         print("Order execution validated no collision point detected \n")
-                        bebop_twist = order.transform_to_bebop_twist()
+                        bebop_twist = order.transform_to_bebop_twist(distance_twist)
                         print("Sending movement order to bebop\n")
                         for drone in self.drones:
                             drone.send_bebop_order(bebop_twist)

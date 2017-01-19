@@ -177,7 +177,7 @@ class LeapInterface(Leap.Listener):
                         swept_angle =  (circle.progress - previous_update.progress) * 2 * Leap.PI
                         #print("\n\n\t %s \n\n") % (swept_angle)
 
-                        if swept_angle>= 0.4:
+                        if swept_angle>= 1:
                             # Determine clock direction using the angle between the pointable and the circle normal
                             if circle.pointable.direction.angle_to(circle.normal) <= Leap.PI/4:
                                 self.clockwiseness = 1
