@@ -38,7 +38,7 @@ class Order(object):
 
         return distance
 
-    def transform_to_bebop_twist(self):
+    def transform_to_bebop_twist(self, twist):
         '''
         Turn the order message to bebop compatible twist message
 
@@ -56,35 +56,49 @@ class Order(object):
         angular.y (1)       Land
 
         Acceptable range for all fields are [-1;1]
-        '''
-        speed = 0.15
+'''
+        dead_zone = 0.002
 
-        print("\nLinear X(F/R): %2.4s\tLinear Y(L/R): %2.4s\tLinear Z(U/D): %2.4s\n") % (self.linear.x, self.linear.y, self.linear.z)
+        print("Drone raw order is:\n")
+        print("Leap_distance_order = [%2.8s;%2.8s;%2.8s][%2.8s;%2.8s;%2.8s]\n" % (
+            twist.linear.x,
+            twist.linear.y,
+            twist.linear.z,
+            twist.angular.x,
+            twist.angular.y,
+            twist.angular.z
+            ))
 
-        if self.linear.y > 0:
-            print("Drone order is to go left\n")
-            x = speed
-        elif self.linear.y < 0:
-            print("Drone order is to go right\n")
-            x = -speed
+        #print("\nDrone raw order is Linear X(F/R): %2.8s\tLinear Y(L/R): %2.8s\tLinear Z(U/D): %2.8s\n") % (self.linear.x, self.linear.y, self.linear.z)
+
+        if twist.linear.x < -dead_zone:
+            print("Drone order is to go left")
+            y = twist.linear.x*10
+        elif twist.linear.x > dead_zone:
+            print("Drone order is to go right")
+            y = -twist.linear.x*10
         else:
-            x = 0
-        if self.linear.x > 0:
-            print("Drone order is to go backward\n")
-            y = -speed
-        elif self.linear.x < 0:
-            print("Drone order is to go forward\n")
-            y = speed
-        else:
+            print("Drone order (L/R) is in deadzone %2.8s") % (twist.linear.x)
             y = 0
 
-        if self.linear.z > 0:
-            print("Drone order is to go up\n")
-            z = speed
-        elif self.linear.z < 0:
-            print("Drone order is to go down\n")
-            z = -speed
+        if twist.linear.y > dead_zone:
+            print("Drone order is to go forward")
+            x = twist.linear.y*10
+        elif twist.linear.y < -dead_zone:
+            print("Drone order is to go backward")
+            x = -twist.linear.y*10
         else:
+            print("Drone order (F/B) is in deadzone %2.8s") % (twist.linear.y)
+            x = 0
+
+        if twist.linear.z > dead_zone:
+            print("Drone order is to go up")
+            z = twist.linear.z*10
+        elif twist.linear.z < -dead_zone:
+            print("Drone order is to go down")
+            z = -twist.linear.z*10
+        else:
+            print("Drone order (U/D) is in deadzone %2.8s") % (twist.linear.z)
             z = 0
 
         linear_vector = Vector3(
@@ -101,9 +115,9 @@ class Order(object):
 
         bebop_twist = Twist(linear=linear_vector, angular=angular_vector)
 
-        print("bebop_twist = [%s;%s;%s][%s;%s;%s]\n" % (
-            linear_vector.x,
+        print("\nbebop_twist = [%2.8s;%2.8s;%2.8s][%2.8s;%2.8s;%2.8s]\n" % (
             linear_vector.y,
+            linear_vector.x,
             linear_vector.z,
             angular_vector.x,
             angular_vector.y,

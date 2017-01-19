@@ -58,11 +58,7 @@ class Map(object):
 
         resolution = self.info.resolution
 
-        drones = [
-            MappedDrone(req.drone1, resolution),
-            MappedDrone(req.drone2, resolution),
-            MappedDrone(req.drone3, resolution)
-        ]
+        drones = [MappedDrone(position, resolution) for position in req.positions]
 
         # optimisations:
         dist_sq = float()

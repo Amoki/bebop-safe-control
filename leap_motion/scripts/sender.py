@@ -1,19 +1,14 @@
 #!/usr/bin/env python
-__author__ = 'flier'
-
-import argparse
-
 import rospy
 import leap_interface
-import datetime
 
-from leap_motion.msg import leap
 from leap_motion.msg import leapros
 
 FREQUENCY_ROSTOPIC_DEFAULT = 0.01
 NODENAME = 'leap_pub'
 PARAMNAME_FREQ = 'freq'
 PARAMNAME_FREQ_ENTIRE = '/' + NODENAME + '/' + PARAMNAME_FREQ
+
 
 def sender():
     '''
@@ -27,7 +22,7 @@ def sender():
     #pub     = rospy.Publisher('leapmotion/raw',leap,queue_size=1)
     pub_ros   = rospy.Publisher('leapmotion/data',leapros,queue_size=1)
     rospy.init_node(NODENAME)
-    rate = rospy.Rate(4) # 4hz
+    rate = rospy.Rate(40) # 4hz
 
     while not rospy.is_shutdown():
         hand_direction_   = li.get_hand_direction()
@@ -66,7 +61,6 @@ def sender():
         # We don't publish native data types, see ROS best practices
         # pub.publish(hand_direction=hand_direction_,hand_normal = hand_normal_, hand_palm_pos = hand_palm_pos_, hand_pitch = hand_pitch_, hand_roll = hand_roll_, hand_yaw = hand_yaw_)
         pub_ros.publish(msg)
-        print("%s" % datetime.datetime.now())
         # rospy.sleep(rospy.get_param(PARAMNAME_FREQ_ENTIRE, FREQUENCY_ROSTOPIC_DEFAULT))
         rate.sleep()
 
