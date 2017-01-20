@@ -18,11 +18,11 @@
 
 ///////////////// PARAMETERS ////////////////
 #define USB_CON
-#define NB_TAGS 2
+#define NB_TAGS 1
 #define NB_ANCH 4
 
 /* Pozyx */
-uint16_t  flyingTags[NB_TAGS]= {0x606B, 0x683D};
+uint16_t  flyingTags[NB_TAGS]= {0x683D};
 uint16_t  masterTag = 0x6F4A;
 
 uint16_t  anchors[NB_ANCH]  = { 0x6001, 0x603A, 0x6037, 0x603B};  // THIS IS HARD
