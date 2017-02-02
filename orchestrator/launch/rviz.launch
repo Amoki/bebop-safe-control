@@ -3,5 +3,5 @@
 	<node pkg="tf" name="static_transform_publisher" type="static_transform_publisher" args="0.0 0.0 0.0 0.0 0.0 0.0 map fixed_map 100" />
 
 	<!-- Launch rviz -->
-	<node pkg="rviz" name="rviz" type="rviz" args="$(find orchestrator)/rviz/orchestrator.rviz" />
+	<node pkg="rviz" name="rviz" type="rviz" args="-d $(find orchestrator)/rviz/orchestrator.rviz" />
 </launch>

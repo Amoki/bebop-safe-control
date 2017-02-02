@@ -28,7 +28,7 @@ class MappedDrone(object):
 class Map(object):
     data = None
     info = None
-    ROOF_CM = 50  # m
+    ROOF_CM = 2.5  # m
     roof = None
 
     def __init__(self):
@@ -58,7 +58,11 @@ class Map(object):
 
         resolution = self.info.resolution
 
-        drones = [MappedDrone(position, resolution) for position in req.positions]
+        drones = [
+            MappedDrone(req.drone1, resolution),
+            MappedDrone(req.drone2, resolution),
+            MappedDrone(req.drone3, resolution)
+        ]
 
         # optimisations:
         dist_sq = float()

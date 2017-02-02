@@ -52,11 +52,12 @@ class Orchestrator(object):
         '''
 
         # Check collision with wall
-        '''obstacle_positions = self.get_nearest_obstacles([d.future_position for d in self.drones]).positions
-        self.publish_collisions(obstacle_positions)
+        obstacle_positions = self.get_nearest_obstacles(*[d.future_position for d in self.drones])
+        positions = [obstacle_positions.drone1, obstacle_positions.drone2, obstacle_positions.drone3]
+        self.publish_collisions(positions)
 
         will_wall_collide = False
-        for drone, obstacle_position in zip(self.drones, obstacle_positions):
+        for drone, obstacle_position in zip(self.drones, positions):
             if self.get_distance(drone.future_position, obstacle_position) <= drone.size:
                 will_wall_collide = True
 
@@ -69,7 +70,7 @@ class Orchestrator(object):
                 break
 
         return will_wall_collide or will_drone_collide
-'''
+
     def get_distance(self, a, b):
         return math.sqrt(
             (b.x - a.x) ** 2 +
@@ -84,14 +85,14 @@ class Orchestrator(object):
             point=positions[0],
             header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
         ))
-        # self.pub_collision_point2.publish(PointStamped(
-        #     point=positions[1],
-        #     header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
-        # ))
-        # self.pub_collision_point3.publish(PointStamped(
-        #     point=positions[2],
-        #     header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
-        # ))
+        self.pub_collision_point2.publish(PointStamped(
+            point=positions[1],
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
+        self.pub_collision_point3.publish(PointStamped(
+            point=positions[2],
+            header=Header(seq=0, frame_id='map', stamp=rospy.Time.now())
+        ))
 
     def publish_future_pose(self):
         '''
@@ -178,22 +179,22 @@ class Orchestrator(object):
         Callback called on new publish point on rviz position
         '''
         self.drones[0].future_position = Point(
+            x=point_stamped.point.x - 2,
+            y=point_stamped.point.y,
+            z=point_stamped.point.z
+        )
+
+        self.drones[1].future_position = Point(
             x=point_stamped.point.x,
             y=point_stamped.point.y,
             z=point_stamped.point.z
         )
 
-        # self.drones[1].future_position = Point(
-        #     x=point_stamped.point.x,
-        #     y=point_stamped.point.y,
-        #     z=point_stamped.point.z
-        # )
-
-        # self.drones[2].future_position = Point(
-        #     x=point_stamped.point.x + 2,
-        #     y=point_stamped.point.y,
-        #     z=point_stamped.point.z
-        # )
+        self.drones[2].future_position = Point(
+            x=point_stamped.point.x + 2,
+            y=point_stamped.point.y,
+            z=point_stamped.point.z
+        )
 
         self.publish_future_pose()
         self.will_collide()
